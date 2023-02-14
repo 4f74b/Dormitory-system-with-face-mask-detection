@@ -1,0 +1,113 @@
+<% layout('layouts/boilerplate') %>
+    <link href="/assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="/plugins/editors/quill/quill.snow.css">
+    <!--  BEGIN CONTENT AREA  -->
+    <div id="content" class="main-content mt-5 pt-3">
+        <div class="container">
+            <div class="container">
+                <%- include('../partials/flash/flash.ejs') %>
+
+
+                    <div id="basic" class="row layout-spacing layout-top-spacing">
+                        <div class="col-lg-12">
+                            <div class="statbox widget box box-shadow rounded-0">
+                                <div class="widget-header">
+                                    <div class="row">
+                                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                                            <h4> Write complaint </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <form id="theForm"
+                                    action="/dormitory/student/post-complaint/<%= currentUser.username %>"
+                                    method="post">
+
+                                    <div class="addTaskAccordion" id="add_task_accordion">
+                                        <div class="card task-text-progress">
+                                            <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo"
+                                                data-parent="#add_task_accordion">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="task-title mb-4">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="feather feather-edit-3">
+                                                                    <path d="M12 20h9"></path>
+                                                                    <path
+                                                                        d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z">
+                                                                    </path>
+                                                                </svg>
+                                                                <input id="complaintHeading" type="text"
+                                                                    placeholder="Notice Heading" class="form-control"
+                                                                    name="complaintHeading">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="task-badge">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                    class="feather feather-star">
+                                                                    <polygon
+                                                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                                                                    </polygon>
+                                                                </svg>
+                                                                <textarea id="compliant" placeholder="Notice Content"
+                                                                    class="form-control"
+                                                                    name="formattedComplaint"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <button class="btn btn-success rounded-0" id="submit">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+    </div>
+    </div>
+    <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+
+    <!-- <script src="/plugins/editors/quill/quill.js"></script> -->
+    <!-- <script src="/plugins/editors/quill/custom-quill.js"></script> -->
+    <script>
+        //var quill = new Quill('#editor-container', {
+        //    modules: {
+        //        toolbar: [
+        //            [{ header: [1, 2, false] }],
+        //            ['bold', 'italic', 'underline'],
+        //            ['image', 'code-block']
+        //        ]
+        //    },
+        //    placeholder: 'Compose an epic...',
+        //    theme: 'snow'  // or 'bubble'
+        //});
+
+        //document.getElementById('complaint').value = document.getElementById('editor-container');
+        //document.getElementById('test').innerHTML = document.getElementById('complaint').value;
+        //console.dir(document.getElementById('complaint').value)
+
+        document.getElementById('theForm').addEventListener('submit', (evt) => {
+            evt.stopPropagation();
+            document.getElementById('complaint').value = document.querySelector('.ql-editor').innerHTML
+        });
+
+    </script>

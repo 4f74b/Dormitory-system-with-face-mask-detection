@@ -1,0 +1,258 @@
+<% layout('layouts/boilerplate') %>
+
+    <link href="/plugins/notification/snackbar/snackbar.min.css" rel="stylesheet" type="text/css">
+
+    <!--  BEGIN CONTENT AREA  -->
+    <div id="content" class="main-content mt-5 pt-3">
+        <div class="container p-1 m-0" style="min-width: 100%;">
+            <%- include('../partials/flash/flash.ejs') %>
+
+                <button id="toast-btn" class="btn btn-primary showNotification d-none">show notification</button>
+
+                <!-- Toast Element -->
+
+
+                <div style="position: absolute; top: 15px; right: 10px;z-index: 9999;">
+                    <div class="toast toast-primary fade hide" role="alert" data-delay="6000" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="mr-auto mr-5"><span id="name"></span>&nbsp;Returned</strong>
+                            <small class="meta-time">just now</small>
+                            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="toast-body">
+                            <a href="" id="link">
+                                <img id="profileImage" class="" style="border-radius: 50%;"
+                                    src="/assets/img/profile-6.jpg" alt="" srcset="" width="60" height="60">
+                            </a>
+                            Hostel <span id="hostelNo"></span>,&nbsp;
+                            Room # <span id="roomNo"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-dialog m-0 d-flex justify-content-center" role="document"
+                    style="max-width: 100%; max-height:70vh;">
+                    <div class="modal-content rounded-0" id="modal-reload" style="width: fit-content;">
+                        <div class="modal-body p-1">
+                            <div class="cameraWrapper h-100 col-lg-12 col-md-12 col-sm-12 col-12 mt-2 w-100"
+                                id="wrapper">
+                                <video muted id="video" width="720" height="560" autoplay
+                                    class="position-relative revert"></video>
+                                <div class="loader1 d-none justify-content-center align-items-center">
+                                    <div class="spinner-border text-info align-self-center loader-lg">
+                                    </div>
+                                    <div>&nbsp;&nbsp;Loading Models</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+        </div>
+        <div class="modal-footer">
+            <img src="" alt="" id="testImg">
+            <button id="stop" type="button" class="btn btn-primary">stop Camera</button>
+        </div>
+
+    </div>
+    </div>
+    <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+
+
+    <script src="/face-api/face-api.min.js"></script>
+
+    <!-- notification -->
+    <script>
+        // Get the Toast button
+        var toastButton = document.getElementById("toast-btn");
+        // Get the Toast element
+        var toastElement = document.getElementsByClassName("toast")[0];
+
+        toastButton.onclick = function () {
+            $('.toast').toast('show');
+        }
+    </script>
+
+
+    <script>
+        //Stream camera output into video element
+        const video = document.getElementById("video");
+        let inverval2;
+        function startVideo() {
+            navigator.getUserMedia(
+                { video: {} },
+                (stream) => (video.srcObject = stream),
+                (err) => console.error(err)
+            );
+        }
+        //stop camera
+        function stopCamera() {
+            clearInterval(inverval2)
+            video.srcObject = null;
+            video.src = '';
+            video.pause();
+            navigator.getUserMedia({ video: true }, (stream) => {
+                stream.getTracks().forEach((track) => {
+                    track.enabled = false;
+                    track.stop();
+                })
+            }, err => console.error(err))
+        }
+
+
+
+        //require face models
+        Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri("/"),
+            faceapi.nets.faceLandmark68Net.loadFromUri("/"),
+            faceapi.nets.faceRecognitionNet.loadFromUri("/"),
+            faceapi.nets.faceExpressionNet.loadFromUri("/"),
+        ]).then(() => {
+            startVideo();
+            //detect faces when camera turns on
+            video.addEventListener("play", async () => {
+                const canvas = faceapi.createCanvasFromMedia(video);
+                canvas.classList.add("position-absolute");
+                document.getElementById("wrapper").append(canvas);
+                const displaySize = { width: video.width, height: video.height };
+                faceapi.matchDimensions(canvas, displaySize);
+
+
+                //Open loader ui
+                await document.querySelector('.loader1').classList.replace('d-none', 'd-flex');
+                let detection, tempImg;
+                inverval2 = setInterval(async () => {
+                    detections = await getDetections(canvas, displaySize);
+                    if (detections.length) {
+                        for (face of detections) {
+                            //Temporarily save image in a variable. If the resposnse from server says that the detection is unknown, then send the image to another route to save it
+                            tempImg = await extractFaceFromBox(video, face.detection._box);
+                            //Check if the detected face is present in database
+                            detection = await checkFace(face)
+                            if (detection.dayPassRequest) {
+                                console.log(detection.dayPassRequest)
+                                document.getElementById('name').innerHTML = detection.dayPassRequest.sender.fullName;
+                                if (detection.dayPassRequest.sender.profileImage) {
+                                    document.getElementById('profileImage').setAttribute('src', '/hostel-files/hostellite-profile-images/' + detection.dayPassRequest.sender.profileImage)
+                                }
+                                document.getElementById('link').setAttribute('href', '/dormitory/student/' + detection.dayPassRequest.senderUsername)
+
+                                document.getElementById('hostelNo').innerHTML = detection.dayPassRequest.sender.hostelInfo.hostelNo;
+                                document.getElementById('roomNo').innerHTML = detection.dayPassRequest.sender.hostelInfo.roomNo;
+                                document.querySelector('.showNotification').click();
+
+                            }
+                            if (detection.nightPassRequest) {
+                                console.log(detection.nightPassRequest)
+
+                                document.getElementById('name').innerHTML = detection.nightPassRequest.sender.fullName;
+                                if (detection.nightPassRequest.sender.profileImage) {
+                                    document.getElementById('profileImage').setAttribute('src', '/hostel-files/hostellite-profile-images/' + detection.nightPassRequest.sender.profileImage)
+                                }
+                                document.getElementById('link').setAttribute('href', '/dormitory/student/' + detection.nightPassRequest.senderUsername)
+
+                                document.getElementById('hostelNo').innerHTML = detection.nightPassRequest.sender.hostelInfo.hostelNo;
+                                document.getElementById('roomNo').innerHTML = detection.nightPassRequest.sender.hostelInfo.roomNo;
+                                document.querySelector('.showNotification').click();
+
+                            }
+                            //If the face is not present in database
+                            //if (detection._label == 'unknown') {
+                            //Show picture in surveillane page
+                            //document.querySelector('.intruder').innerHTML += '<tbody> <tr> <td class="p-1"> <div class="td-content customer-name"> <img src="' + tempImg + '" alt="avatar"> </div> </td> <td class="p-1 w-50"> <div class="d-flex flex-column align-item-center justify-content-center"> <div>Unknown</div> <div>time</div> <div>Hostel#</div> </div> </td> <td class="p-1"> <div class="d-flex flex-column align-item-center justify-content-center"> <span class="badge badge-danger mb-1" role="button">Ignore</span> </div> </td> </tr> </tbody>';
+
+                            //send picture of intruder to server
+                            //postIntruder(tempImg);
+                            //}
+                        }
+                    }
+
+                }, 500)
+            });
+        });
+
+        //check if the detected face is present in database
+        async function checkFace(face) {
+
+            // POST request using fetch()
+            let res = await fetch("/dormitory/admin/check-face", {
+                method: "POST",
+                body: JSON.stringify(face),
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            res = await res.json();
+            return res;
+        }
+
+        //Start detecting faces
+        async function getDetections(canvas, displaySize) {
+            const detections = await faceapi
+                .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+                .withFaceLandmarks()
+                .withFaceDescriptors();
+            document.querySelector('.loader1').classList.replace('d-flex', 'd-none');
+            const resizedDetections = faceapi.resizeResults(
+                detections,
+                displaySize
+            );
+            //clear canvas
+            canvas
+                .getContext("2d")
+                .clearRect(0, 0, canvas.width, canvas.height);
+
+
+            faceapi.draw.drawDetections(canvas, resizedDetections, { withScore: false });
+            //faceapi.draw.drawFaceLandmarks(canvas, resizedDetections, { drawLines: true })
+            return detections;
+        }
+
+
+        // This function extract a face from video frame with giving bounding box and display result into outputimage
+        async function extractFaceFromBox(inputVideo, box) {
+            let output;
+            const regionsToExtract = [
+                new faceapi.Rect(0, 0, 720, 560),
+            ];
+
+            let faceImages = await faceapi.extractFaces(
+                inputVideo,
+                regionsToExtract
+            );
+
+            if (faceImages.length == 0) {
+                console.log("Face not found");
+            } else {
+                faceImages.forEach((cnv) => {
+                    output = cnv.toDataURL();
+                });
+            }
+            return output;
+        }
+
+        //Send intruder data to database to save it
+        async function postIntruder(intruder) {
+            let formData = new FormData();
+            formData.append('intruder', intruder);
+            let res = await fetch("post-intruder/", {
+                method: "POST",
+                body: formData,
+            })
+            res = await res.json();
+        }
+
+        document.getElementById('stop').addEventListener('click', (evt) => {
+            stopCamera();
+        })
+
+
+    </script>
+    <script src="/plugins/notification/snackbar/snackbar.min.js"></script>
+
+    <script src="/assets/js/components/notification/custom-snackbar.js"></script>

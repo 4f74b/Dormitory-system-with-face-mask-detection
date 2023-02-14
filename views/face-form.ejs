@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        face form
+    </title>
+
+    <style>
+
+    </style>
+    <style>
+        .revert {
+            transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
+            /* Safari and Chrome */
+            -moz-transform: rotateY(180deg);
+            /* Firefox */
+        }
+
+        .wrapper {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            position: absolute;
+            -moz-transform: scale(-1, 1);
+            -webkit-transform: scale(-1, 1);
+            -o-transform: scale(-1, 1);
+            transform: scale(-1, 1);
+            filter: FlipH;
+        }
+    </style>
+
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+
+
+</head>
+
+<body>
+    <div class="wrapper" id="wrapper">
+
+        <video muted id="video" width="720" height="560" autoplay class="position-relative revert">
+        </video>
+        <button class="mb-5">Stop Video</button>
+
+        <img src="" alt="" width="100" height="100">
+        <!-- <form action="/check-face" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" id="file">
+        <button type="submit">Submit</button>
+    </form> -->
+    </div>
+
+    <script src="face-api/face-api.min.js"></script>
+
+
+    <script>
+        //Stream camera output into video element
+        const video = document.getElementById('video');
+
+        function startVideo() {
+            navigator.getUserMedia(
+                { video: {} },
+                stream => video.srcObject = stream,
+                err => console.error(err)
+            )
+        }
+        document.querySelector('button').addEventListener('click', (e) => {
+            video.srcObject = null;
+            navigator.getUserMedia({ video: true }, (stream) => {
+                stream.getTracks().forEach((track) => {
+                    track.enabled = false;
+                    track.stop();
+                })
+            }, err => console.error(err))
+        })
+
+
+        //require face models
+        Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri('/'),
+            faceapi.nets.faceLandmark68Net.loadFromUri('/'),
+            faceapi.nets.faceRecognitionNet.loadFromUri('/'),
+            faceapi.nets.faceExpressionNet.loadFromUri('/')
+        ]).then(startVideo)
+
+
+        //detect faces when camera turns on
+        video.addEventListener('play', () => {
+
+            const canvas = faceapi.createCanvasFromMedia(video)
+            canvas.classList.add('position-absolute');
+            canvas.style.top = '-13px';
+            document.getElementById('wrapper').append(canvas)
+            const displaySize = { width: video.width, height: video.height }
+            faceapi.matchDimensions(canvas, displaySize)
+            setInterval(async () => {
+                const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks()
+                //if (detections.length == 1) {
+                // POST request using fetch()
+                //await fetch("http://localhost:3000/post-face", {
+
+                // Adding method type
+                //method: "POST",
+
+                // Adding body or contents to send
+                //        body: JSON.stringify(detections[0]),
+                //    })
+                //} else if (detections.length > 1) {
+                //    console.log('There should be only one person in front of the camera while registering face');
+                //}
+                const resizedDetections = faceapi.resizeResults(detections, displaySize)
+                canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+                faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
+
+            }, 200)
+        })
+
+        const outputImage = document.querySelector('img');
+        // This function extract a face from video frame with giving bounding box and display result into outputimage
+        async function extractFaceFromBox(inputImage, box) {
+            const regionsToExtract = [
+                new faceapi.Rect(box.x, box.y, box.width, box.height)
+            ]
+
+            let faceImages = await faceapi.extractFaces(inputImage, regionsToExtract)
+
+            if (faceImages.length == 0) {
+                console.log('Face not found')
+            }
+            else {
+                faceImages.forEach(cnv => {
+                    outputImage.src = cnv.toDataURL();
+                })
+            }
+        }
+    </script>
+</body>
+
+</html>

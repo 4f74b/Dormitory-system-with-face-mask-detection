@@ -1,0 +1,891 @@
+<!--  BEGIN NAVBAR  -->
+<div class="sub-header-container top-0" style="top: 0;">
+    <header class="header navbar navbar-expand-sm p-0" style="background-color: #3A533D;">
+        <a href="javascript:void(0);" class="sidebarCollapse" data-placement="bottom">
+            <svg fill="#fff" viewBox="-5.5 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#fff">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                    <title>menu</title>
+                    <path
+                        d="M1.375 9.156h18.063c0.781 0 1.375-0.594 1.375-1.375 0-0.75-0.594-1.344-1.375-1.344h-18.063c-0.781 0-1.375 0.594-1.375 1.344 0 0.781 0.594 1.375 1.375 1.375zM1.375 14.625h18.063c0.781 0 1.375-0.594 1.375-1.375 0-0.75-0.594-1.344-1.375-1.344h-18.063c-0.781 0-1.375 0.594-1.375 1.344 0 0.781 0.594 1.375 1.375 1.375zM1.375 20.094h18.063c0.781 0 1.375-0.594 1.375-1.344 0-0.781-0.594-1.375-1.375-1.375h-18.063c-0.781 0-1.375 0.594-1.375 1.375 0 0.75 0.594 1.344 1.375 1.344zM1.375 25.563h18.063c0.781 0 1.375-0.594 1.375-1.344 0-0.781-0.594-1.375-1.375-1.375h-18.063c-0.781 0-1.375 0.594-1.375 1.375 0 0.75 0.594 1.344 1.375 1.344z">
+                    </path>
+                </g>
+            </svg>
+        </a>
+
+        <ul class="navbar-nav flex-row">
+            <li>
+                <div class="page-header">
+
+                    <nav class="breadcrumb-one mr-3 rounded border-right p-2" aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="d-flex justify-content-end align-items-center">
+                                <h4 class="mb-0">
+                                    <a href="javascript:void(0);" class="" id="" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="true">
+                                        <img src="/hostel-files/logo/logo.png" alt="avatar" width="30" height="30">
+                                    </a>
+                                </h4>
+                            </li>
+                        </ol>
+                    </nav>
+
+                </div>
+            </li>
+            <!-- <li>
+                <div class="page-header">
+
+                    <nav class="breadcrumb-one mr-3 rounded border-right p-2" aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="d-flex justify-content-end align-items-center">
+                                <h4 class="mb-0"><a class=" text-white"
+                                        href="/dormitory/<%= (currentUser.role == 'warden') ? 'admin' : (currentUser.role == 'staff') ? 'staff' : 'student' %>">Home</a>
+                                </h4>
+                            </li>
+                        </ol>
+                    </nav>
+
+                </div>
+            </li> -->
+        </ul>
+        <% if (!currentUser && currentUrl.split('/')[2] !='admin' ){ %>
+            <a href="/dormitory/student/login"
+                class=" ml-auto mr-5 pr-2 pl-2 text-black h-100 d-flex justify-content-center align-items-center btn btn-outline-dark"
+                style="margin-left:auto;">Login
+            </a>
+
+            <% }else if (!currentUser){ %>
+                <a href="/dormitory/admin/login"
+                    class="ml-auto mr-5 pr-2 pl-2 text-black h-100 d-flex justify-content-center align-items-center btn btn-outline-dark"
+                    style="margin-left:auto;">Login
+                </a>
+                <% } %>
+
+    </header>
+</div>
+<!--  END NAVBAR  -->
+
+<!--  BEGIN MAIN CONTAINER  -->
+<div class="main-container" id="container">
+
+    <div class="overlay"></div>
+    <div class="search-overlay"></div>
+
+    <!--  BEGIN SIDEBAR  -->
+    <div class="sidebar-wrapper sidebar-theme" style="top:0;">
+
+        <nav id="sidebar" style="background-color: #92b674;">
+            <div class="shadow-bottom"></div>
+
+
+            <% if (currentUser && currentUser.role=='student' ){ %>
+                <ul class="list-unstyled menu-categories ps ps--active-y pr-0" id="accordionExample"
+                    style="height: 100vh !important;">
+                    <% if (currentUser){ %>
+                        <li
+                            class="menu mt-5 mb-2 <%= (currentUrl.split('/')[3] == currentUser.username) ? 'bg-dark rounded' : '' %>">
+                            <div aria-expanded="false"
+                                data-active="<%= (currentUrl.split('/')[3] == currentUser.username) ? 'true' : 'false' %>"
+                                class="d-flex align-items-center justify-content-center mt-4" style="cursor:unset;">
+                                <div class="">
+                                    <div class="media d-flex flex-column align-items-center justify-content-center">
+                                        <a href="/dormitory/student/<%= currentUser.username %>"
+                                            class="w-img mb-2 outline-badge-primary rounded">
+                                            <% if (currentUser.profileImage){ %>
+                                                <img src="/hostel-files/hostellite-profile-images/<%= currentUser.profileImage %>"
+                                                    alt="avatar">
+                                                <% }else{ %>
+                                                    <img src="/assets/img/profile-6.jpg" alt="avatar">
+                                                    <% } %>
+                                        </a>
+                                        <div
+                                            class="media-body d-flex flex-column align-items-center justify-content-center">
+                                            <h6>
+                                                <%= currentUser.username %>
+                                            </h6>
+                                            <a href="/dormitory/student/logout"
+                                                class="btn btn-outline-danger btn-rounded mr-1 meta-date-time mb-1">Logout</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <% } %>
+
+                            <li class="menu">
+                                <a href="/dormitory/student/notice-board"
+                                    data-active="<%= (currentUrl.split('/')[3] == 'notice-board') ? 'true' : 'false' %>"
+                                    aria-expanded="false" class="dropdown-toggle">
+                                    <div class="">
+                                        <svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                            xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
+                                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                stroke-linejoin="round"></g>
+                                            <g id="SVGRepo_iconCarrier">
+                                                <title>notice-active</title>
+                                                <desc>Created with sketchtool.</desc>
+                                                <g id="web-app" stroke="none" stroke-width="1" fill="none"
+                                                    fill-rule="evenodd">
+                                                    <g id="notice-active" fill="#000000">
+                                                        <path
+                                                            d="M15.0846417,4.85258583 C15.3698859,3.78571001 16.3431867,3 17.5,3 C18.8807119,3 20,4.11928813 20,5.5 C20,6.82802369 18.9645064,7.9141949 17.6568748,7.99515796 C17.8790698,8.62208363 18,9.29691944 18,10 L18,16 L19,16 C19.5499992,16 20,16.4500008 20,17 C20,17.5499992 19.5499992,18 19,18 L15,18 L15,19 C15,20.6568542 13.6568542,22 12,22 C10.3431458,22 9,20.6568542 9,19 L9,18 L5,18 C4.44999981,18 4,17.5499992 4,17 C4,16.4500008 4.44999981,16 5,16 L6,16 L6,10 C6,7.02700371 8.16228666,4.55903653 11,4.08295844 L11,3 C11,2.44771525 11.4477153,2 12,2 C12.5522847,2 13,2.44771525 13,3 L13,4.08295844 C13.7514465,4.20902728 14.4555302,4.47477291 15.0846417,4.85258583 Z M12,20 C12.5522847,20 13,19.5522847 13,19 C13,18.7251922 13,18.3918589 13,18 L11,18 C11,18.470365 11,18.8036984 11,19 C11,19.5522847 11.4477153,20 12,20 Z M8,16 L16,16 L16,10 C16,7.790861 14.209139,6 12,6 C9.790861,6 8,7.790861 8,10 L8,16 Z"
+                                                            id="Shape"> </path>
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </svg>
+                                        <span>Notice Board</span>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <li class="menu">
+                                <a href="#dashboard" data-toggle="collapse"
+                                    data-active="<%= (currentUrl.split('/')[3] == 'post-pass-request' || currentUrl.split('/')[3] == 'pass-request-status') ? 'true' : 'false' %>"
+                                    aria-expanded="<%= (currentUrl.split('/')[3] == 'post-pass-request' || currentUrl.split('/')[3] == 'pass-request-status') ? 'true' : 'false' %>"
+                                    class="dropdown-toggle <%= (currentUrl.split('/')[3]=='post-pass-request' || currentUrl.split('/')[3]=='pass-request-status' ) ? '' : 'collapse'
+                                        %>">
+                                    <div class="">
+                                        <svg height="200px" width="200px" version="1.1" id="Layer_1"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"
+                                            xml:space="preserve" fill="#000000">
+                                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                stroke-linejoin="round"></g>
+                                            <g id="SVGRepo_iconCarrier">
+                                                <path style="fill:#D9D8DB;"
+                                                    d="M408.326,54.127H103.674c-9.194,0-16.649,7.454-16.649,16.649v424.576 c0,9.194,7.454,16.648,16.649,16.648h304.653c9.194,0,16.649-7.454,16.649-16.648V70.775 C424.975,61.581,417.521,54.127,408.326,54.127z M333.689,134.793H178.31c-9.194,0-16.649-7.454-16.649-16.649 s7.454-16.649,16.649-16.649h155.378c9.194,0,16.649,7.454,16.649,16.649S342.883,134.793,333.689,134.793z">
+                                                </path>
+                                                <path style="fill:#C6C5CA;"
+                                                    d="M408.326,54.127H255.999v47.37h77.69c9.194,0,16.649,7.454,16.649,16.649 s-7.454,16.649-16.649,16.649h-77.69V512h152.327c9.194,0,16.649-7.454,16.649-16.648V70.775 C424.975,61.581,417.521,54.127,408.326,54.127z">
+                                                </path>
+                                                <path style="fill:#FF9811;"
+                                                    d="M343.509,361.549c-23.375-23.375-54.453-36.248-87.509-36.248s-64.135,12.873-87.51,36.248 c-23.375,23.375-36.247,54.453-36.247,87.509c0,4.597,3.727,8.324,8.324,8.324h230.865c4.597,0,8.324-3.727,8.324-8.324 C379.756,416.002,366.884,384.924,343.509,361.549z">
+                                                </path>
+                                                <circle style="fill:#57565C;" cx="255.999" cy="241.814" r="60.534">
+                                                </circle>
+                                                <path style="fill:#CC2A00;"
+                                                    d="M293.734,9.04c0-4.992-4.048-9.04-9.04-9.04h-57.39c-4.992,0-9.04,4.048-9.04,9.04v125.873h75.47 V9.04z">
+                                                </path>
+                                                <path style="fill:#A92300;"
+                                                    d="M293.734,9.04c0-4.992-4.048-9.04-9.04-9.04h-29.26v134.913h38.301V9.04z">
+                                                </path>
+                                                <path style="fill:#57565C;"
+                                                    d="M343.509,361.549c-23.375-23.375-54.453-36.247-87.509-36.247s-64.135,12.873-87.509,36.247 s-36.247,54.453-36.247,87.509c0,4.597,3.727,8.324,8.324,8.324h230.865c4.597,0,8.324-3.727,8.324-8.324 C379.756,416.002,366.884,384.924,343.509,361.549z">
+                                                </path>
+                                                <g>
+                                                    <path style="fill:#3E3E42;"
+                                                        d="M256.937,181.3v121.023c32.999-0.503,59.598-27.393,59.598-60.512 C316.535,208.694,289.935,181.803,256.937,181.3z">
+                                                    </path>
+                                                    <path style="fill:#3E3E42;"
+                                                        d="M343.509,361.549c-23.375-23.375-54.453-36.247-87.509-36.247v132.082h115.433 c4.597,0,8.324-3.727,8.324-8.324C379.756,416.002,366.884,384.924,343.509,361.549z">
+                                                    </path>
+                                                </g>
+                                            </g>
+                                        </svg>
+                                        <span>Pass Request</span>
+                                    </div>
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-chevron-right">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </div>
+                                </a>
+                                <ul class="submenu list-unstyled collapse <%= (currentUrl.split('/')[3] == 'post-pass-request' || currentUrl.split('/')[3] == 'pass-request-status') ? 'show' : '' %>"
+                                    id="dashboard" data-parent="#accordionExample" style="">
+                                    <li class="<%= (currentUrl.split('/')[3] == 'post-pass-request') ? 'active' : ''%>">
+                                        <a href="/dormitory/student/post-pass-request"> Send Pass Request </a>
+                                    </li>
+                                    <li
+                                        class="<%= (currentUrl.split('/')[3] == 'pass-request-status') ? 'active' : ''%>">
+                                        <a href="/dormitory/student/pass-request-status"> Pass request Status </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li class="menu">
+                                <a href="#components" data-toggle="collapse" aria-expanded="false"
+                                    data-active="<%= (currentUrl.split('/')[3] == 'post-complaint' || currentUrl.split('/')[3] == 'complaint-log') ? 'true' : 'false' %>"
+                                    class="dropdown-toggle">
+                                    <div class="">
+                                        <svg fill="#000000" viewBox="0 0 32 32"
+                                            style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"
+                                            version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
+                                            xmlns:serif="http://www.serif.com/"
+                                            xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                stroke-linejoin="round"></g>
+                                            <g id="SVGRepo_iconCarrier">
+                                                <g transform="matrix(1,0,0,1,0,-192)">
+                                                    <g transform="matrix(0.923077,0,0,0.923077,4.23077,17.0769)">
+                                                        <circle cx="9.5" cy="202.5" r="6.5" style="fill:#90e0ef;">
+                                                        </circle>
+                                                    </g>
+                                                    <g transform="matrix(0.833333,0,0,1,-0.833333,-6.2883e-13)">
+                                                        <path
+                                                            d="M25,216C25,215.47 24.747,214.961 24.297,214.586C23.847,214.211 23.237,214 22.6,214C19.155,214 12.845,214 9.4,214C8.763,214 8.153,214.211 7.703,214.586C7.253,214.961 7,215.47 7,216C7,217.222 7,218.778 7,220C7,220.53 7.253,221.039 7.703,221.414C8.153,221.789 8.763,222 9.4,222C12.845,222 19.155,222 22.6,222C23.237,222 23.847,221.789 24.297,221.414C24.747,221.039 25,220.53 25,220C25,218.778 25,217.222 25,216Z"
+                                                            style="fill:#90e0ef;"></path>
+                                                    </g>
+                                                    <g transform="matrix(1,0,0,1,-3,0)">
+                                                        <circle cx="24" cy="200" r="6" style="fill:#90e0ef;"></circle>
+                                                    </g>
+                                                    <g transform="matrix(1,0,0,1,-3,0)">
+                                                        <path
+                                                            d="M24,216C24,215.204 23.684,214.441 23.121,213.879C22.559,213.316 21.796,213 21,213C18.129,213 12.871,213 10,213C9.204,213 8.441,213.316 7.879,213.879C7.316,214.441 7,215.204 7,216L7,220C7,220.796 7.316,221.559 7.879,222.121C8.441,222.684 9.204,223 10,223C12.871,223 18.129,223 21,223C21.796,223 22.559,222.684 23.121,222.121C23.684,221.559 24,220.796 24,220L24,216ZM22,216L22,220C22,220.265 21.895,220.52 21.707,220.707C21.52,220.895 21.265,221 21,221L10,221C9.735,221 9.48,220.895 9.293,220.707C9.105,220.52 9,220.265 9,220C9,220 9,216 9,216C9,215.735 9.105,215.48 9.293,215.293C9.48,215.105 9.735,215 10,215L21,215C21.265,215 21.52,215.105 21.707,215.293C21.895,215.48 22,215.735 22,216ZM17.591,197.182C17.08,197.063 16.547,197 16,197C12.137,197 9,200.137 9,204C9,207.863 12.137,211 16,211C18.861,211 21.323,209.28 22.409,206.818C22.92,206.937 23.453,207 24,207C27.863,207 31,203.863 31,200C31,196.137 27.863,193 24,193C21.139,193 18.676,194.72 17.591,197.182ZM17.056,199.112C16.716,199.039 16.362,199 16,199C13.24,199 11,201.24 11,204C11,206.76 13.24,209 16,209C18.015,209 19.753,207.806 20.544,206.088C18.428,204.883 17,202.607 17,200C17,199.699 17.019,199.402 17.056,199.112ZM24,195C26.76,195 29,197.24 29,200C29,202.76 26.76,205 24,205C21.24,205 19,202.76 19,200C19,197.24 21.24,195 24,195ZM24,202C24.552,202 25,202.448 25,203C25,203.552 24.552,204 24,204C23.448,204 23,203.552 23,203C23,202.448 23.448,202 24,202ZM23,197L23,200C23,200.552 23.448,201 24,201C24.552,201 25,200.552 25,200L25,197C25,196.448 24.552,196 24,196C23.448,196 23,196.448 23,197Z"
+                                                            style="fill:#1990a7;"></path>
+                                                    </g>
+                                                </g>
+                                            </g>
+                                        </svg>
+                                        <span>Complaint</span>
+                                    </div>
+                                    <div>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="feather feather-chevron-right">
+                                            <polyline points="9 18 15 12 9 6"></polyline>
+                                        </svg>
+                                    </div>
+                                </a>
+                                <ul class="collapse submenu list-unstyled  <%= (currentUrl.split('/')[3] == 'post-complaint' || currentUrl.split('/')[3] == 'complaint-log') ? 'show' : '' %>"
+                                    id="components" data-parent="#accordionExample">
+                                    <li class="<%= (currentUrl.split('/')[3] == 'post-complaint') ? 'active' : ''%>">
+                                        <a href="/dormitory/student/post-complaint"> Write Complaint </a>
+                                    </li>
+                                    <li class="<%= (currentUrl.split('/')[3] == 'complaint-log') ? 'active' : ''%>">
+                                        <a href="/dormitory/student/complaint-log/<%= currentUser.username %>">
+                                            Complaint Log </a>
+                                    </li>
+                                </ul>
+                            </li>
+                </ul>
+
+                <% } else if (currentUser && currentUser.role=='warden' ){ %>
+
+                    <ul class="list-unstyled menu-categories ps ps--active-y pr-0" id="accordionExample"
+                        style="height: 100vh !important;">
+                        <% if (currentUser){ %>
+                            <li class="menu mt-5">
+                                <div aria-expanded="false" data-active=""
+                                    class="d-flex align-items-center justify-content-center mt-4" style="cursor:unset;">
+                                    <div class="">
+                                        <div class="media d-flex flex-column align-items-center justify-content-center">
+                                            <% if (currentUser.profileImage){ %>
+                                                <a href="/dormitory/student/<%= currentUser.username %>"
+                                                    class="w-img mb-2">
+                                                    <img src="/hostel-files/hostellite-profile-images/<%= currentUser.profileImage %>"
+                                                        alt="avatar">
+                                                </a>
+                                                <% }else{ %>
+                                                    <svg viewBox="0 0 24 24" fill="none" width="60" height="60"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                            stroke-linejoin="round"></g>
+                                                        <g id="SVGRepo_iconCarrier">
+                                                            <path opacity="0.4"
+                                                                d="M12 22.01C17.5228 22.01 22 17.5329 22 12.01C22 6.48716 17.5228 2.01001 12 2.01001C6.47715 2.01001 2 6.48716 2 12.01C2 17.5329 6.47715 22.01 12 22.01Z"
+                                                                fill="#292D32"></path>
+                                                            <path
+                                                                d="M12 6.93994C9.93 6.93994 8.25 8.61994 8.25 10.6899C8.25 12.7199 9.84 14.3699 11.95 14.4299C11.98 14.4299 12.02 14.4299 12.04 14.4299C12.06 14.4299 12.09 14.4299 12.11 14.4299C12.12 14.4299 12.13 14.4299 12.13 14.4299C14.15 14.3599 15.74 12.7199 15.75 10.6899C15.75 8.61994 14.07 6.93994 12 6.93994Z"
+                                                                fill="#292D32"></path>
+                                                            <path
+                                                                d="M18.7807 19.36C17.0007 21 14.6207 22.01 12.0007 22.01C9.3807 22.01 7.0007 21 5.2207 19.36C5.4607 18.45 6.1107 17.62 7.0607 16.98C9.7907 15.16 14.2307 15.16 16.9407 16.98C17.9007 17.62 18.5407 18.45 18.7807 19.36Z"
+                                                                fill="#292D32"></path>
+                                                        </g>
+                                                    </svg>
+                                                    <% } %>
+                                                        <div
+                                                            class="media-body d-flex flex-column align-items-center justify-content-center">
+                                                            <h6>
+                                                                <%= currentUser.username %>
+                                                            </h6>
+                                                            <a href="/dormitory/admin/logout"
+                                                                class="btn btn-outline-primary btn-rounded mr-1 meta-date-time">Logout</a>
+                                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <% } %>
+
+                                <li class="menu mt-5">
+                                    <a href="/dormitory/admin/notice-board" aria-expanded="false"
+                                        data-active="<%= (currentUrl.split('/')[3] == 'notice-board') ? 'true' : 'false' %>"
+                                        class="dropdown-toggle">
+                                        <div class="">
+                                            <svg viewBox="0 0 1024 1024" class="icon" version="1.1"
+                                                xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <path
+                                                        d="M554.666667 64h-85.333334a21.333333 21.333333 0 0 0-21.333333 21.333333v85.333334a21.333333 21.333333 0 0 0 21.333333 21.333333h85.333334a21.333333 21.333333 0 0 0 21.333333-21.333333V85.333333a21.333333 21.333333 0 0 0-21.333333-21.333333z"
+                                                        fill="#B3B3B3"></path>
+                                                    <path
+                                                        d="M896 149.333333H128a21.333333 21.333333 0 0 0-21.333333 21.333334v597.333333a21.333333 21.333333 0 1 0 42.666666 0h725.333334a21.333333 21.333333 0 1 0 42.666666 0V170.666667a21.333333 21.333333 0 0 0-21.333333-21.333334z"
+                                                        fill="#E6E6E6"></path>
+                                                    <path
+                                                        d="M512 960a21.333333 21.333333 0 0 1-21.333333-21.333333v-170.666667a21.333333 21.333333 0 1 1 42.666666 0v170.666667a21.333333 21.333333 0 0 1-21.333333 21.333333zM255.978667 1002.666667a21.333333 21.333333 0 0 1-16.64-34.666667l170.666666-213.333333a21.333333 21.333333 0 0 1 33.344 26.645333l-170.666666 213.333333a21.333333 21.333333 0 0 1-16.704 8.021334zM768.021333 1002.666667a21.333333 21.333333 0 0 1-16.682666-8l-170.666667-213.333334a21.333333 21.333333 0 0 1 33.322667-26.666666l170.666666 213.333333a21.333333 21.333333 0 0 1-16.64 34.666667z"
+                                                        fill="#B3B3B3"></path>
+                                                    <path
+                                                        d="M981.333333 789.333333H42.666667a21.333333 21.333333 0 1 1 0-42.666666h938.666666a21.333333 21.333333 0 1 1 0 42.666666z"
+                                                        fill="#898989"></path>
+                                                    <path
+                                                        d="M533.333333 277.333333h-42.666666a21.333333 21.333333 0 0 0-21.333334 21.333334v298.666666a21.333333 21.333333 0 0 0 21.333334 21.333334h42.666666a21.333333 21.333333 0 0 0 21.333334-21.333334V298.666667a21.333333 21.333333 0 0 0-21.333334-21.333334zM362.666667 448h-42.666667a21.333333 21.333333 0 0 0-21.333333 21.333333v128a21.333333 21.333333 0 0 0 21.333333 21.333334h42.666667a21.333333 21.333333 0 0 0 21.333333-21.333334v-128a21.333333 21.333333 0 0 0-21.333333-21.333333zM704 405.333333h-42.666667a21.333333 21.333333 0 0 0-21.333333 21.333334v170.666666a21.333333 21.333333 0 0 0 21.333333 21.333334h42.666667a21.333333 21.333333 0 0 0 21.333333-21.333334v-170.666666a21.333333 21.333333 0 0 0-21.333333-21.333334z"
+                                                        fill="#43A6DD"></path>
+                                                </g>
+                                            </svg>
+                                            <span>Notice Board</span>
+                                        </div>
+                                    </a>
+                                </li>
+
+                                <li class="menu">
+                                    <a href="/dormitory/admin/pass-requests" aria-expanded="false"
+                                        data-active="<%= (currentUrl.split('/')[3] == 'pass-requests') ? 'true' : 'false' %>"
+                                        class="dropdown-toggle">
+                                        <div class="">
+                                            <svg height="200px" width="200px" version="1.1" id="Layer_1"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512"
+                                                xml:space="preserve" fill="#000000">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <path style="fill:#D9D8DB;"
+                                                        d="M408.326,54.127H103.674c-9.194,0-16.649,7.454-16.649,16.649v424.576 c0,9.194,7.454,16.648,16.649,16.648h304.653c9.194,0,16.649-7.454,16.649-16.648V70.775 C424.975,61.581,417.521,54.127,408.326,54.127z M333.689,134.793H178.31c-9.194,0-16.649-7.454-16.649-16.649 s7.454-16.649,16.649-16.649h155.378c9.194,0,16.649,7.454,16.649,16.649S342.883,134.793,333.689,134.793z">
+                                                    </path>
+                                                    <path style="fill:#C6C5CA;"
+                                                        d="M408.326,54.127H255.999v47.37h77.69c9.194,0,16.649,7.454,16.649,16.649 s-7.454,16.649-16.649,16.649h-77.69V512h152.327c9.194,0,16.649-7.454,16.649-16.648V70.775 C424.975,61.581,417.521,54.127,408.326,54.127z">
+                                                    </path>
+                                                    <path style="fill:#FF9811;"
+                                                        d="M343.509,361.549c-23.375-23.375-54.453-36.248-87.509-36.248s-64.135,12.873-87.51,36.248 c-23.375,23.375-36.247,54.453-36.247,87.509c0,4.597,3.727,8.324,8.324,8.324h230.865c4.597,0,8.324-3.727,8.324-8.324 C379.756,416.002,366.884,384.924,343.509,361.549z">
+                                                    </path>
+                                                    <circle style="fill:#57565C;" cx="255.999" cy="241.814" r="60.534">
+                                                    </circle>
+                                                    <path style="fill:#CC2A00;"
+                                                        d="M293.734,9.04c0-4.992-4.048-9.04-9.04-9.04h-57.39c-4.992,0-9.04,4.048-9.04,9.04v125.873h75.47 V9.04z">
+                                                    </path>
+                                                    <path style="fill:#A92300;"
+                                                        d="M293.734,9.04c0-4.992-4.048-9.04-9.04-9.04h-29.26v134.913h38.301V9.04z">
+                                                    </path>
+                                                    <path style="fill:#57565C;"
+                                                        d="M343.509,361.549c-23.375-23.375-54.453-36.247-87.509-36.247s-64.135,12.873-87.509,36.247 s-36.247,54.453-36.247,87.509c0,4.597,3.727,8.324,8.324,8.324h230.865c4.597,0,8.324-3.727,8.324-8.324 C379.756,416.002,366.884,384.924,343.509,361.549z">
+                                                    </path>
+                                                    <g>
+                                                        <path style="fill:#3E3E42;"
+                                                            d="M256.937,181.3v121.023c32.999-0.503,59.598-27.393,59.598-60.512 C316.535,208.694,289.935,181.803,256.937,181.3z">
+                                                        </path>
+                                                        <path style="fill:#3E3E42;"
+                                                            d="M343.509,361.549c-23.375-23.375-54.453-36.247-87.509-36.247v132.082h115.433 c4.597,0,8.324-3.727,8.324-8.324C379.756,416.002,366.884,384.924,343.509,361.549z">
+                                                        </path>
+                                                    </g>
+                                                </g>
+                                            </svg>
+                                            <span>New Pass Requests</span>
+                                        </div>
+                                    </a>
+                                </li>
+
+
+                                <li class="menu">
+                                    <a href="/dormitory/admin/attendence-list" aria-expanded="false"
+                                        data-active="<%= (currentUrl.split('/')[3] == 'attendence-list') ? 'true' : 'false' %>"
+                                        class="dropdown-toggle">
+                                        <div class="">
+                                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                                mirror-in-rtl="true" fill="#000000">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <circle fill="#494c4e" cx="6" cy="12" r="2"></circle>
+                                                    <path fill="#494c4e"
+                                                        d="M8.708 5.717l-1.954 1.96c-.25.243-.61.37-.958.307C5.5 7.93 4.64 7.327 4.458 7.21c-.46-.29-.6-.91-.3-1.383.29-.46.91-.602 1.38-.3l.32.2 1.43-1.435c.39-.39 1.03-.39 1.42 0 .39.392.39 1.034 0 1.425z">
+                                                    </path>
+                                                    <path fill="#494c4e"
+                                                        d="M20 7c0 .55-.45 1-1 1h-8.01c-.55-.01-.99-.45-.99-1s.44-.99.99-1H19c.55 0 1 .45 1 1z">
+                                                    </path>
+                                                    <circle fill="#494c4e" cx="6" cy="18" r="2"></circle>
+                                                    <path fill="#494c4e"
+                                                        d="M20 13c0 .55-.45 1-1 1h-8.01c-.55-.01-.99-.45-.99-1s.44-.99.99-1H19c.55 0 1 .45 1 1zM20 19c0 .55-.45 1-1 1h-8.01c-.55-.01-.99-.45-.99-1s.44-.99.99-1H19c.55 0 1 .45 1 1z">
+                                                    </path>
+                                                    <path fill="#494c4e"
+                                                        d="M22 0H2C.9 0 0 .9 0 2v20c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V2c0-1.1-.9-2-2-2zm0 21.5c0 .276-.224.5-.5.5h-19c-.276 0-.5-.224-.5-.5v-19c0-.276.224-.5.5-.5h19c.276 0 .5.224.5.5v19z">
+                                                    </path>
+                                                </g>
+                                            </svg>
+                                            <span>Attendence List</span>
+                                        </div>
+                                    </a>
+                                </li>
+
+                                <li class="menu">
+                                    <a href="/dormitory/admin/complaints" aria-expanded="false"
+                                        data-active="<%= (currentUrl.split('/')[3] == 'complaints') ? 'true' : 'false' %>"
+                                        class="dropdown-toggle">
+                                        <div class="">
+                                            <svg fill="#000000" viewBox="0 0 32 32"
+                                                style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"
+                                                version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:serif="http://www.serif.com/"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <g transform="matrix(1,0,0,1,0,-192)">
+                                                        <g transform="matrix(0.923077,0,0,0.923077,4.23077,17.0769)">
+                                                            <circle cx="9.5" cy="202.5" r="6.5" style="fill:#90e0ef;">
+                                                            </circle>
+                                                        </g>
+                                                        <g transform="matrix(0.833333,0,0,1,-0.833333,-6.2883e-13)">
+                                                            <path
+                                                                d="M25,216C25,215.47 24.747,214.961 24.297,214.586C23.847,214.211 23.237,214 22.6,214C19.155,214 12.845,214 9.4,214C8.763,214 8.153,214.211 7.703,214.586C7.253,214.961 7,215.47 7,216C7,217.222 7,218.778 7,220C7,220.53 7.253,221.039 7.703,221.414C8.153,221.789 8.763,222 9.4,222C12.845,222 19.155,222 22.6,222C23.237,222 23.847,221.789 24.297,221.414C24.747,221.039 25,220.53 25,220C25,218.778 25,217.222 25,216Z"
+                                                                style="fill:#90e0ef;"></path>
+                                                        </g>
+                                                        <g transform="matrix(1,0,0,1,-3,0)">
+                                                            <circle cx="24" cy="200" r="6" style="fill:#90e0ef;">
+                                                            </circle>
+                                                        </g>
+                                                        <g transform="matrix(1,0,0,1,-3,0)">
+                                                            <path
+                                                                d="M24,216C24,215.204 23.684,214.441 23.121,213.879C22.559,213.316 21.796,213 21,213C18.129,213 12.871,213 10,213C9.204,213 8.441,213.316 7.879,213.879C7.316,214.441 7,215.204 7,216L7,220C7,220.796 7.316,221.559 7.879,222.121C8.441,222.684 9.204,223 10,223C12.871,223 18.129,223 21,223C21.796,223 22.559,222.684 23.121,222.121C23.684,221.559 24,220.796 24,220L24,216ZM22,216L22,220C22,220.265 21.895,220.52 21.707,220.707C21.52,220.895 21.265,221 21,221L10,221C9.735,221 9.48,220.895 9.293,220.707C9.105,220.52 9,220.265 9,220C9,220 9,216 9,216C9,215.735 9.105,215.48 9.293,215.293C9.48,215.105 9.735,215 10,215L21,215C21.265,215 21.52,215.105 21.707,215.293C21.895,215.48 22,215.735 22,216ZM17.591,197.182C17.08,197.063 16.547,197 16,197C12.137,197 9,200.137 9,204C9,207.863 12.137,211 16,211C18.861,211 21.323,209.28 22.409,206.818C22.92,206.937 23.453,207 24,207C27.863,207 31,203.863 31,200C31,196.137 27.863,193 24,193C21.139,193 18.676,194.72 17.591,197.182ZM17.056,199.112C16.716,199.039 16.362,199 16,199C13.24,199 11,201.24 11,204C11,206.76 13.24,209 16,209C18.015,209 19.753,207.806 20.544,206.088C18.428,204.883 17,202.607 17,200C17,199.699 17.019,199.402 17.056,199.112ZM24,195C26.76,195 29,197.24 29,200C29,202.76 26.76,205 24,205C21.24,205 19,202.76 19,200C19,197.24 21.24,195 24,195ZM24,202C24.552,202 25,202.448 25,203C25,203.552 24.552,204 24,204C23.448,204 23,203.552 23,203C23,202.448 23.448,202 24,202ZM23,197L23,200C23,200.552 23.448,201 24,201C24.552,201 25,200.552 25,200L25,197C25,196.448 24.552,196 24,196C23.448,196 23,196.448 23,197Z"
+                                                                style="fill:#1990a7;"></path>
+                                                        </g>
+                                                    </g>
+                                                </g>
+                                            </svg>
+                                            <span>View Complaints</span>
+                                        </div>
+                                    </a>
+                                </li>
+
+                                <li class="menu">
+                                    <a href="/dormitory/admin/hostellites-list" aria-expanded="false"
+                                        data-active="<%= (currentUrl.split('/')[3] == 'hostellites-list') ? 'true' : 'false' %>"
+                                        class="dropdown-toggle">
+                                        <div class="">
+                                            <svg viewBox="0 0 1024 1024" fill="#000000" class="icon" version="1.1"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <path
+                                                        d="M775.942 959.906H56.09a7.994 7.994 0 0 1-7.998-7.998V72.09a7.994 7.994 0 0 1 7.998-7.998H104.08c4.42 0 7.998 3.578 7.998 7.998s-3.578 8-7.998 8H64.09v863.82h703.854V80.09h-39.992c-4.42 0-7.998-3.578-7.998-8s3.578-7.998 7.998-7.998h47.99a7.994 7.994 0 0 1 7.998 7.998v879.818a7.992 7.992 0 0 1-7.998 7.998z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M663.964 80.09h-47.99c-4.422 0-7.998-3.578-7.998-8s3.576-7.998 7.998-7.998h47.99c4.42 0 7.998 3.578 7.998 7.998s-3.578 8-7.998 8zM551.988 80.09h-47.99c-4.42 0-7.998-3.578-7.998-8s3.578-7.998 7.998-7.998h47.99c4.42 0 7.998 3.578 7.998 7.998s-3.578 8-7.998 8zM440.012 80.09h-47.99c-4.422 0-7.998-3.578-7.998-8s3.576-7.998 7.998-7.998h47.99c4.42 0 7.998 3.578 7.998 7.998s-3.578 8-7.998 8zM328.036 80.09h-47.99c-4.422 0-8-3.578-8-8s3.578-7.998 8-7.998h47.99c4.42 0 7.998 3.578 7.998 7.998s-3.578 8-7.998 8zM216.058 80.09H168.068c-4.422 0-8-3.578-8-8s3.578-7.998 8-7.998h47.99a7.998 7.998 0 1 1 0 15.998zM767.944 991.9H56.09a7.994 7.994 0 0 1-7.998-7.998 7.994 7.994 0 0 1 7.998-7.998h711.852a7.992 7.992 0 0 1 7.998 7.998 7.99 7.99 0 0 1-7.996 7.998zM767.944 1023.894H56.09a7.994 7.994 0 0 1-7.998-8 7.994 7.994 0 0 1 7.998-7.998h711.852a7.994 7.994 0 0 1 7.998 7.998 7.99 7.99 0 0 1-7.996 8z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M136.074 144.076c-13.232 0-23.996-10.764-23.996-23.996V24.1c0-13.232 10.764-23.996 23.996-23.996S160.07 10.868 160.07 24.1v95.98c0 13.232-10.764 23.996-23.996 23.996z m0-127.974a8.008 8.008 0 0 0-7.998 8v95.98c0 4.414 3.592 8 7.998 8a8 8 0 0 0 7.998-8v-95.98a8 8 0 0 0-7.998-8zM248.05 144.076c-13.232 0-23.994-10.764-23.994-23.996V24.1c0-13.232 10.762-23.996 23.994-23.996s23.996 10.764 23.996 23.996v95.98c0 13.232-10.762 23.996-23.996 23.996z m0-127.974a8.008 8.008 0 0 0-7.998 8v95.98c0 4.414 3.594 8 7.998 8a8 8 0 0 0 7.998-8v-95.98a8 8 0 0 0-7.998-8zM360.028 144.076c-13.23 0-23.994-10.764-23.994-23.996V24.1c0-13.232 10.764-23.996 23.994-23.996 13.232 0 23.996 10.764 23.996 23.996v95.98c0 13.232-10.764 23.996-23.996 23.996z m0-127.974a8.008 8.008 0 0 0-7.998 8v95.98c0 4.414 3.594 8 7.998 8a8 8 0 0 0 8-8v-95.98a8 8 0 0 0-8-8zM472.004 144.076c-13.232 0-23.996-10.764-23.996-23.996V24.1c0-13.232 10.764-23.996 23.996-23.996S496 10.87 496 24.102v95.98c0 13.23-10.764 23.994-23.996 23.994z m0-127.974c-4.406 0-8 3.584-8 8v95.98c0 4.414 3.594 8 8 8a8 8 0 0 0 7.998-8v-95.98a8 8 0 0 0-7.998-8zM583.982 144.076c-13.232 0-23.996-10.764-23.996-23.996V24.1c0-13.232 10.764-23.996 23.996-23.996 13.23 0 23.994 10.764 23.994 23.996v95.98c0 13.232-10.764 23.996-23.994 23.996z m0-127.974c-4.406 0-8 3.584-8 8v95.98c0 4.414 3.594 8 8 8a8 8 0 0 0 7.998-8v-95.98a8 8 0 0 0-7.998-8zM695.958 144.076c-13.232 0-23.996-10.764-23.996-23.996V24.1c0-13.232 10.764-23.996 23.996-23.996 13.23 0 23.994 10.764 23.994 23.996v95.98c0.002 13.232-10.762 23.996-23.994 23.996z m0-127.974c-4.406 0-8 3.584-8 8v95.98c0 4.414 3.594 8 8 8a8 8 0 0 0 7.998-8v-95.98a8 8 0 0 0-7.998-8zM919.928 911.918a8.004 8.004 0 0 1-6.672-3.562l-31.992-47.99a8.024 8.024 0 0 1-0.922-6.966l15.574-46.756v-14.702a7.994 7.994 0 0 1 8-7.998 7.994 7.994 0 0 1 7.998 7.998v15.996c0 0.86-0.14 1.718-0.406 2.532l-14.764 44.274 29.822 44.74a7.986 7.986 0 0 1-2.216 11.092 7.988 7.988 0 0 1-4.422 1.342z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M919.912 911.918a8 8 0 0 1-6.656-12.436l29.824-44.74-14.748-44.274a7.732 7.732 0 0 1-0.422-2.532v-15.996a7.994 7.994 0 0 1 7.998-7.998 7.994 7.994 0 0 1 7.998 7.998v14.702l15.592 46.756a7.976 7.976 0 0 1-0.938 6.966l-31.994 47.99a7.966 7.966 0 0 1-6.654 3.564zM951.904 671.966h-63.986a7.994 7.994 0 0 1-7.998-7.998c0-4.422 3.578-8 7.998-8h63.986c4.422 0 8 3.578 8 8a7.994 7.994 0 0 1-8 7.998z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M887.918 671.966a8 8 0 0 1-7.982-7.686l-15.996-399.926a7.98 7.98 0 0 1 7.67-8.31c4.374-0.554 8.124 3.258 8.31 7.67l15.996 399.942a8.016 8.016 0 0 1-7.67 8.31h-0.328zM951.92 671.966h-0.328c-4.42-0.188-7.858-3.906-7.67-8.31l15.998-399.942c0.172-4.412 3.874-8.216 8.31-7.67a8.002 8.002 0 0 1 7.67 8.31l-15.996 399.926a8 8 0 0 1-7.984 7.686z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M967.902 272.034a7.992 7.992 0 0 1-7.998-7.998c0-37.148-13.452-55.988-39.992-55.988-26.526 0-39.992 18.84-39.992 55.988 0 4.422-3.578 7.998-7.998 7.998s-7.998-3.576-7.998-7.998c0-45.748 20.418-71.984 55.988-71.984 35.586 0 55.988 26.236 55.988 71.984a7.994 7.994 0 0 1-7.998 7.998z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M935.908 208.046h-31.992c-4.422 0-8-3.578-8-7.998s3.578-7.998 8-7.998h31.992c4.422 0 7.998 3.578 7.998 7.998s-3.576 7.998-7.998 7.998zM919.912 479.99a7.992 7.992 0 0 1-7.998-7.998V232.042c0-4.42 3.576-7.998 7.998-7.998s7.998 3.578 7.998 7.998v239.95a7.992 7.992 0 0 1-7.998 7.998zM951.904 703.96h-63.986a7.994 7.994 0 0 1-7.998-8 7.994 7.994 0 0 1 7.998-7.998h63.986c4.422 0 8 3.578 8 7.998 0 4.422-3.578 8-8 8z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M951.904 703.96a7.994 7.994 0 0 1-7.998-8v-31.992c0-4.422 3.578-8 7.998-8 4.422 0 8 3.578 8 8v31.992c0 4.422-3.578 8-8 8zM887.918 703.96a7.994 7.994 0 0 1-7.998-8v-31.992c0-4.422 3.578-8 7.998-8a7.994 7.994 0 0 1 7.998 8v31.992c0 4.422-3.576 8-7.998 8zM951.904 799.94h-63.986a7.994 7.994 0 0 1-7.998-7.998 7.994 7.994 0 0 1 7.998-7.998h63.986c4.422 0 8 3.578 8 7.998a7.994 7.994 0 0 1-8 7.998z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M951.904 799.94a7.994 7.994 0 0 1-7.998-7.998v-95.98a7.994 7.994 0 0 1 7.998-7.998c4.422 0 8 3.578 8 7.998v95.98a7.994 7.994 0 0 1-8 7.998zM887.918 799.94a7.994 7.994 0 0 1-7.998-7.998v-95.98a7.994 7.994 0 0 1 7.998-7.998 7.994 7.994 0 0 1 7.998 7.998v95.98a7.992 7.992 0 0 1-7.998 7.998zM200.06 368.03a7.98 7.98 0 0 1-5.654-2.342l-31.994-31.994a7.996 7.996 0 1 1 11.31-11.31l31.994 31.994a7.996 7.996 0 0 1-5.656 13.652z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M200.06 368.03a7.996 7.996 0 0 1-5.654-13.652l63.986-63.988a7.996 7.996 0 1 1 11.31 11.31l-63.986 63.988a7.98 7.98 0 0 1-5.656 2.342z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M200.06 575.986a7.972 7.972 0 0 1-5.654-2.344l-31.994-31.992a7.996 7.996 0 1 1 11.31-11.31l31.994 31.992a7.996 7.996 0 0 1-5.656 13.654z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M200.06 575.986a7.996 7.996 0 0 1-5.654-13.654l63.986-63.97a7.996 7.996 0 1 1 11.31 11.31l-63.986 63.97a7.964 7.964 0 0 1-5.656 2.344z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M663.964 288.046H344.032c-4.42 0-7.998-3.578-7.998-8s3.578-8 7.998-8h319.934c4.42 0 7.998 3.578 7.998 8s-3.58 8-8 8z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M663.964 336.036H344.032c-4.42 0-7.998-3.578-7.998-7.998s3.578-8 7.998-8h319.934c4.42 0 7.998 3.578 7.998 8s-3.58 7.998-8 7.998z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M503.998 384.026h-159.966a7.994 7.994 0 0 1-7.998-8 7.994 7.994 0 0 1 7.998-7.998h159.966a7.994 7.994 0 0 1 7.998 7.998c0 4.424-3.578 8-7.998 8z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M663.964 496.002H344.032c-4.42 0-7.998-3.578-7.998-7.998s3.578-8 7.998-8h319.934c4.42 0 7.998 3.578 7.998 8s-3.58 7.998-8 7.998z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M663.964 543.992H344.032a7.994 7.994 0 0 1-7.998-7.998 7.994 7.994 0 0 1 7.998-7.998h319.934a7.994 7.994 0 0 1 7.998 7.998 7.996 7.996 0 0 1-8 7.998z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M503.998 591.984h-159.966a7.994 7.994 0 0 1-7.998-8 7.994 7.994 0 0 1 7.998-7.998h159.966a7.994 7.994 0 0 1 7.998 7.998c0 4.422-3.578 8-7.998 8z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M200.06 783.944a7.972 7.972 0 0 1-5.654-2.344l-31.994-31.992a7.996 7.996 0 1 1 11.31-11.31l31.994 31.992a7.996 7.996 0 0 1-5.656 13.654z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M200.06 783.944a7.996 7.996 0 0 1-5.654-13.654l63.986-63.986a7.996 7.996 0 1 1 11.31 11.31L205.716 781.6a7.974 7.974 0 0 1-5.656 2.344z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M663.964 703.96H344.032a7.994 7.994 0 0 1-7.998-8 7.994 7.994 0 0 1 7.998-7.998h319.934a7.994 7.994 0 0 1 7.998 7.998 7.998 7.998 0 0 1-8 8z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M663.964 751.95H344.032a7.994 7.994 0 0 1-7.998-7.998 7.994 7.994 0 0 1 7.998-7.998h319.934a7.994 7.994 0 0 1 7.998 7.998 7.996 7.996 0 0 1-8 7.998z"
+                                                        fill=""></path>
+                                                    <path
+                                                        d="M503.998 799.94h-159.966a7.994 7.994 0 0 1-7.998-7.998 7.994 7.994 0 0 1 7.998-7.998h159.966a7.994 7.994 0 0 1 7.998 7.998 7.994 7.994 0 0 1-7.998 7.998z"
+                                                        fill=""></path>
+                                                </g>
+                                            </svg>
+                                            <span>Hostelites List</span>
+                                        </div>
+                                    </a>
+                                </li>
+
+
+                                <li class="menu">
+                                    <a href="/dormitory/admin/surveillance" aria-expanded="false"
+                                        data-active="<%= (currentUrl.split('/')[3] == 'surveillance') ? 'true' : 'false' %>"
+                                        class="dropdown-toggle">
+                                        <div class="">
+                                            <svg fill="#000000" viewBox="0 0 32 32" version="1.1"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <title>surveillance-camera</title>
+                                                    <path
+                                                        d="M30.014 10.885v0 0c-0.021-0.019-0.077-0.050-0.158-0.087-0.374-0.2-0.753-0.351-1.137-0.455-0.785-0.295-1.634-0.594-1.634-0.594v0l-17.798-6.907c-1.565-0.452-3.276-0.512-5.223 0.057l-0-0-1.397 6.986 5.409 2.28 2.136 10.955c-0.023 0.019-0.046 0.038-0.068 0.058l-7.762 1.686-0.068 4.772 9.174-2.932 1.607-0.312c0.027 0.001 0.054 0.002 0.081 0.002 0.908-0.002 1.644-0.871 1.642-1.942 0-0.002 0-0.005 0-0.007-0.002-1.070-0.739-1.937-1.648-1.935-0.267 0.001-0.518 0.076-0.741 0.21l-2.044-9.582 11.272 4.752 5.205-0.33 3.152-6.674c0 0 0 0 0 0zM27.321 15.276c-0.591 1.119-1.565 1.662-2.174 1.213s-0.624-1.72-0.033-2.839c0.591-1.119 1.565-1.662 2.174-1.213s0.624 1.72 0.033 2.839z">
+                                                    </path>
+                                                </g>
+                                            </svg>
+                                            <span>Surveillance</span>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="menu">
+                                    <a href="/dormitory/admin/add-hostellite"
+                                        data-active="<%= (currentUrl.split('/')[3] == 'add-hostellite') ? 'true' : 'false' %>"
+                                        aria-expanded="false" class="dropdown-toggle">
+                                        <div class="">
+                                            <svg viewBox="0 0 1024 1024" class="icon" version="1.1"
+                                                xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <path
+                                                        d="M512 1024C229.7 1024 0 794.3 0 512S229.7 0 512 0s512 229.7 512 512-229.7 512-512 512z m0-938.7C276.7 85.3 85.3 276.7 85.3 512S276.7 938.7 512 938.7 938.7 747.3 938.7 512 747.3 85.3 512 85.3z"
+                                                        fill="#3688FF"></path>
+                                                    <path
+                                                        d="M682.7 554.7H341.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h341.3c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.6 42.7z"
+                                                        fill="#5F6379"></path>
+                                                    <path
+                                                        d="M512 725.3c-23.6 0-42.7-19.1-42.7-42.7V341.3c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v341.3c0 23.6-19.1 42.7-42.7 42.7z"
+                                                        fill="#5F6379"></path>
+                                                </g>
+                                            </svg>
+                                            <span>Add Student</span>
+                                        </div>
+                                    </a>
+                                </li>
+
+                                <li class="menu">
+                                    <a href="/dormitory/admin/add-admin" aria-expanded="false"
+                                        data-active="<%= (currentUrl.split('/')[3] == 'add-admin') ? 'true' : 'false' %>"
+                                        class="dropdown-toggle">
+                                        <div class="">
+                                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <path opacity="0.4"
+                                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                                        fill="#292D32"></path>
+                                                    <path
+                                                        d="M16 11.25H12.75V8C12.75 7.59 12.41 7.25 12 7.25C11.59 7.25 11.25 7.59 11.25 8V11.25H8C7.59 11.25 7.25 11.59 7.25 12C7.25 12.41 7.59 12.75 8 12.75H11.25V16C11.25 16.41 11.59 16.75 12 16.75C12.41 16.75 12.75 16.41 12.75 16V12.75H16C16.41 12.75 16.75 12.41 16.75 12C16.75 11.59 16.41 11.25 16 11.25Z"
+                                                        fill="#292D32"></path>
+                                                </g>
+                                            </svg>
+                                            <span>Add Warden</span>
+                                        </div>
+                                    </a>
+                                </li>
+
+                                <li class="menu">
+                                    <a href="/dormitory/admin/add-staff" aria-expanded="false"
+                                        data-active="<%= (currentUrl.split('/')[3] == 'add-staff') ? 'true' : 'false' %>"
+                                        class="dropdown-toggle">
+                                        <div class="">
+                                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <path opacity="0.4"
+                                                        d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                                        fill="#292D32"></path>
+                                                    <path
+                                                        d="M16 11.25H12.75V8C12.75 7.59 12.41 7.25 12 7.25C11.59 7.25 11.25 7.59 11.25 8V11.25H8C7.59 11.25 7.25 11.59 7.25 12C7.25 12.41 7.59 12.75 8 12.75H11.25V16C11.25 16.41 11.59 16.75 12 16.75C12.41 16.75 12.75 16.41 12.75 16V12.75H16C16.41 12.75 16.75 12.41 16.75 12C16.75 11.59 16.41 11.25 16 11.25Z"
+                                                        fill="#292D32"></path>
+                                                </g>
+                                            </svg>
+                                            <span>Add Staff</span>
+                                        </div>
+                                    </a>
+                                </li>
+
+
+                                <li class="menu">
+                                    <a href="/dormitory/admin/system-key/change" aria-expanded="false"
+                                        data-active="<%= (currentUrl.split('/')[3] == 'system-key') ? 'true' : 'false' %>"
+                                        class="dropdown-toggle">
+                                        <div class="">
+                                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500"
+                                                xml:space="preserve" fill="#000000">
+                                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                    stroke-linejoin="round"></g>
+                                                <g id="SVGRepo_iconCarrier">
+                                                    <style type="text/css">
+                                                        .st0 {
+                                                            fill: #FFFFFF;
+                                                            stroke: #FFFFFF;
+                                                            stroke-width: 10;
+                                                            stroke-miterlimit: 10;
+                                                        }
+
+                                                        .st1 {
+                                                            fill: #FAC300;
+                                                        }
+                                                    </style>
+                                                    <g id="border">
+                                                        <path class="st0"
+                                                            d="M193.8,47.2c-8.5,1.1-16.7,3.5-24.6,6.9c0,0,0,0,0,0c-37.7,16.4-59.9,55.7-54.5,96.4 c6.7,50.4,53,85.8,103.3,79.2c0,0,0,0,0,0c3.2-0.4,6.5-1.1,9.6-1.8l102.4,225.7l11.5-5.2l20.5-9.3l-38.3-84.4l58.8-26.7l-8.8-19 l-58.6,26.6l-15.6-34.5l43.8-20.7L336,264l-43.9,20.8l-32.5-71.6c27.6-19.8,42-53.2,37.5-86.8C290.5,76,244.2,40.5,193.8,47.2 L193.8,47.2z M202.5,116.1c12.9-1.7,24.8,7.4,26.5,20.3c1.3,10.1-4,19.9-13.1,24.4c-2.3,1.1-4.7,1.8-7.2,2.2 c-12.9,1.7-24.8-7.4-26.5-20.3c-1.4-10.8,4.7-21.1,14.8-25.1c0.7-0.3,1.4-0.5,2.1-0.7c0.2,0,0.3-0.1,0.5-0.1 c0.6-0.2,1.2-0.3,1.8-0.4C201.7,116.2,202.1,116.2,202.5,116.1L202.5,116.1z">
+                                                        </path>
+                                                    </g>
+                                                    <g id="object" xmlns:cc="http://creativecommons.org/ns#"
+                                                        xmlns:dc="http://purl.org/dc/elements/1.1/"
+                                                        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+                                                        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                                                        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+                                                        xmlns:svg="http://www.w3.org/2000/svg">
+                                                        <path inkscape:connector-curvature="0" class="st1"
+                                                            d="M193.8,47.2c-8.5,1.1-16.7,3.5-24.6,6.9c0,0,0,0,0,0 c-37.7,16.4-59.9,55.7-54.5,96.4c6.7,50.4,53,85.8,103.3,79.2c0,0,0,0,0,0c3.2-0.4,6.5-1.1,9.6-1.8l102.4,225.7l11.5-5.2l20.5-9.3 l-38.3-84.4l58.8-26.7l-8.8-19l-58.6,26.6l-15.6-34.5l43.8-20.7L336,264l-43.9,20.8l-32.5-71.6c27.6-19.8,42-53.2,37.5-86.8 C290.5,76,244.2,40.5,193.8,47.2L193.8,47.2z M202.5,116.1c12.9-1.7,24.8,7.4,26.5,20.3c1.3,10.1-4,19.9-13.1,24.4 c-2.3,1.1-4.7,1.8-7.2,2.2c-12.9,1.7-24.8-7.4-26.5-20.3c-1.4-10.8,4.7-21.1,14.8-25.1c0.7-0.3,1.4-0.5,2.1-0.7 c0.2,0,0.3-0.1,0.5-0.1c0.6-0.2,1.2-0.3,1.8-0.4C201.7,116.2,202.1,116.2,202.5,116.1L202.5,116.1z">
+                                                        </path>
+                                                    </g>
+                                                </g>
+                                            </svg>
+                                            <span>Change System Key</span>
+                                        </div>
+                                    </a>
+                                </li>
+
+                                <!-- <li class="menu">
+                                    <a href="/dormitory/admin/login" aria-expanded="false" class="dropdown-toggle">
+                                        <div class="">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="feather feather-target">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <circle cx="12" cy="12" r="6"></circle>
+                                                <circle cx="12" cy="12" r="2"></circle>
+                                            </svg>
+                                            <span>Warden Login</span>
+                                        </div>
+                                    </a>
+                                </li> -->
+
+
+                    </ul>
+                    <% }else if (currentUser.role=='staff' ){ %>
+                        <ul class="list-unstyled menu-categories ps ps--active-y pr-0" id="accordionExample"
+                            style="height: 100vh !important;">
+                            <% if (currentUser){ %>
+                                <li class="menu mt-5 mb-5">
+                                    <div aria-expanded="false" data-active="false"
+                                        class="d-flex align-items-center justify-content-center mt-4"
+                                        style="cursor:unset;">
+                                        <div class="">
+                                            <div
+                                                class="media d-flex flex-column align-items-center justify-content-center">
+                                                <% if (currentUser.profileImage){ %>
+                                                    <a href="/dormitory/student/<%= currentUser.username %>"
+                                                        class="w-img mb-2">
+                                                        <img src="/hostel-files/hostellite-profile-images/<%= currentUser.profileImage %>"
+                                                            alt="avatar">
+                                                    </a>
+                                                    <% }else{ %>
+                                                        <svg viewBox="0 0 24 24" fill="none" width="60" height="60"
+                                                            xmlns="http://www.w3.org/2000/svg">
+                                                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                                stroke-linejoin="round"></g>
+                                                            <g id="SVGRepo_iconCarrier">
+                                                                <path opacity="0.4"
+                                                                    d="M12 22.01C17.5228 22.01 22 17.5329 22 12.01C22 6.48716 17.5228 2.01001 12 2.01001C6.47715 2.01001 2 6.48716 2 12.01C2 17.5329 6.47715 22.01 12 22.01Z"
+                                                                    fill="#292D32"></path>
+                                                                <path
+                                                                    d="M12 6.93994C9.93 6.93994 8.25 8.61994 8.25 10.6899C8.25 12.7199 9.84 14.3699 11.95 14.4299C11.98 14.4299 12.02 14.4299 12.04 14.4299C12.06 14.4299 12.09 14.4299 12.11 14.4299C12.12 14.4299 12.13 14.4299 12.13 14.4299C14.15 14.3599 15.74 12.7199 15.75 10.6899C15.75 8.61994 14.07 6.93994 12 6.93994Z"
+                                                                    fill="#292D32"></path>
+                                                                <path
+                                                                    d="M18.7807 19.36C17.0007 21 14.6207 22.01 12.0007 22.01C9.3807 22.01 7.0007 21 5.2207 19.36C5.4607 18.45 6.1107 17.62 7.0607 16.98C9.7907 15.16 14.2307 15.16 16.9407 16.98C17.9007 17.62 18.5407 18.45 18.7807 19.36Z"
+                                                                    fill="#292D32"></path>
+                                                            </g>
+                                                        </svg>
+                                                        <% } %>
+                                                            <div
+                                                                class="media-body d-flex flex-column align-items-center justify-content-center">
+                                                                <h6>
+                                                                    <%= currentUser.username %>
+                                                                </h6>
+                                                                <a href="/dormitory/staff/logout"
+                                                                    class="btn btn-outline-primary btn-rounded mr-1 meta-date-time">Logout</a>
+                                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <% } %>
+                                    <li class="menu">
+                                        <a href="/dormitory/staff/hostellites-list" aria-expanded="false"
+                                            data-active="<%= (currentUrl.split('/')[3] == 'hostellites-list') ? 'true' : 'false' %>"
+                                            class="dropdown-toggle">
+                                            <div class="">
+                                                <svg viewBox="0 0 1024 1024" fill="#000000" class="icon" version="1.1"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                        stroke-linejoin="round"></g>
+                                                    <g id="SVGRepo_iconCarrier">
+                                                        <path
+                                                            d="M775.942 959.906H56.09a7.994 7.994 0 0 1-7.998-7.998V72.09a7.994 7.994 0 0 1 7.998-7.998H104.08c4.42 0 7.998 3.578 7.998 7.998s-3.578 8-7.998 8H64.09v863.82h703.854V80.09h-39.992c-4.42 0-7.998-3.578-7.998-8s3.578-7.998 7.998-7.998h47.99a7.994 7.994 0 0 1 7.998 7.998v879.818a7.992 7.992 0 0 1-7.998 7.998z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M663.964 80.09h-47.99c-4.422 0-7.998-3.578-7.998-8s3.576-7.998 7.998-7.998h47.99c4.42 0 7.998 3.578 7.998 7.998s-3.578 8-7.998 8zM551.988 80.09h-47.99c-4.42 0-7.998-3.578-7.998-8s3.578-7.998 7.998-7.998h47.99c4.42 0 7.998 3.578 7.998 7.998s-3.578 8-7.998 8zM440.012 80.09h-47.99c-4.422 0-7.998-3.578-7.998-8s3.576-7.998 7.998-7.998h47.99c4.42 0 7.998 3.578 7.998 7.998s-3.578 8-7.998 8zM328.036 80.09h-47.99c-4.422 0-8-3.578-8-8s3.578-7.998 8-7.998h47.99c4.42 0 7.998 3.578 7.998 7.998s-3.578 8-7.998 8zM216.058 80.09H168.068c-4.422 0-8-3.578-8-8s3.578-7.998 8-7.998h47.99a7.998 7.998 0 1 1 0 15.998zM767.944 991.9H56.09a7.994 7.994 0 0 1-7.998-7.998 7.994 7.994 0 0 1 7.998-7.998h711.852a7.992 7.992 0 0 1 7.998 7.998 7.99 7.99 0 0 1-7.996 7.998zM767.944 1023.894H56.09a7.994 7.994 0 0 1-7.998-8 7.994 7.994 0 0 1 7.998-7.998h711.852a7.994 7.994 0 0 1 7.998 7.998 7.99 7.99 0 0 1-7.996 8z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M136.074 144.076c-13.232 0-23.996-10.764-23.996-23.996V24.1c0-13.232 10.764-23.996 23.996-23.996S160.07 10.868 160.07 24.1v95.98c0 13.232-10.764 23.996-23.996 23.996z m0-127.974a8.008 8.008 0 0 0-7.998 8v95.98c0 4.414 3.592 8 7.998 8a8 8 0 0 0 7.998-8v-95.98a8 8 0 0 0-7.998-8zM248.05 144.076c-13.232 0-23.994-10.764-23.994-23.996V24.1c0-13.232 10.762-23.996 23.994-23.996s23.996 10.764 23.996 23.996v95.98c0 13.232-10.762 23.996-23.996 23.996z m0-127.974a8.008 8.008 0 0 0-7.998 8v95.98c0 4.414 3.594 8 7.998 8a8 8 0 0 0 7.998-8v-95.98a8 8 0 0 0-7.998-8zM360.028 144.076c-13.23 0-23.994-10.764-23.994-23.996V24.1c0-13.232 10.764-23.996 23.994-23.996 13.232 0 23.996 10.764 23.996 23.996v95.98c0 13.232-10.764 23.996-23.996 23.996z m0-127.974a8.008 8.008 0 0 0-7.998 8v95.98c0 4.414 3.594 8 7.998 8a8 8 0 0 0 8-8v-95.98a8 8 0 0 0-8-8zM472.004 144.076c-13.232 0-23.996-10.764-23.996-23.996V24.1c0-13.232 10.764-23.996 23.996-23.996S496 10.87 496 24.102v95.98c0 13.23-10.764 23.994-23.996 23.994z m0-127.974c-4.406 0-8 3.584-8 8v95.98c0 4.414 3.594 8 8 8a8 8 0 0 0 7.998-8v-95.98a8 8 0 0 0-7.998-8zM583.982 144.076c-13.232 0-23.996-10.764-23.996-23.996V24.1c0-13.232 10.764-23.996 23.996-23.996 13.23 0 23.994 10.764 23.994 23.996v95.98c0 13.232-10.764 23.996-23.994 23.996z m0-127.974c-4.406 0-8 3.584-8 8v95.98c0 4.414 3.594 8 8 8a8 8 0 0 0 7.998-8v-95.98a8 8 0 0 0-7.998-8zM695.958 144.076c-13.232 0-23.996-10.764-23.996-23.996V24.1c0-13.232 10.764-23.996 23.996-23.996 13.23 0 23.994 10.764 23.994 23.996v95.98c0.002 13.232-10.762 23.996-23.994 23.996z m0-127.974c-4.406 0-8 3.584-8 8v95.98c0 4.414 3.594 8 8 8a8 8 0 0 0 7.998-8v-95.98a8 8 0 0 0-7.998-8zM919.928 911.918a8.004 8.004 0 0 1-6.672-3.562l-31.992-47.99a8.024 8.024 0 0 1-0.922-6.966l15.574-46.756v-14.702a7.994 7.994 0 0 1 8-7.998 7.994 7.994 0 0 1 7.998 7.998v15.996c0 0.86-0.14 1.718-0.406 2.532l-14.764 44.274 29.822 44.74a7.986 7.986 0 0 1-2.216 11.092 7.988 7.988 0 0 1-4.422 1.342z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M919.912 911.918a8 8 0 0 1-6.656-12.436l29.824-44.74-14.748-44.274a7.732 7.732 0 0 1-0.422-2.532v-15.996a7.994 7.994 0 0 1 7.998-7.998 7.994 7.994 0 0 1 7.998 7.998v14.702l15.592 46.756a7.976 7.976 0 0 1-0.938 6.966l-31.994 47.99a7.966 7.966 0 0 1-6.654 3.564zM951.904 671.966h-63.986a7.994 7.994 0 0 1-7.998-7.998c0-4.422 3.578-8 7.998-8h63.986c4.422 0 8 3.578 8 8a7.994 7.994 0 0 1-8 7.998z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M887.918 671.966a8 8 0 0 1-7.982-7.686l-15.996-399.926a7.98 7.98 0 0 1 7.67-8.31c4.374-0.554 8.124 3.258 8.31 7.67l15.996 399.942a8.016 8.016 0 0 1-7.67 8.31h-0.328zM951.92 671.966h-0.328c-4.42-0.188-7.858-3.906-7.67-8.31l15.998-399.942c0.172-4.412 3.874-8.216 8.31-7.67a8.002 8.002 0 0 1 7.67 8.31l-15.996 399.926a8 8 0 0 1-7.984 7.686z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M967.902 272.034a7.992 7.992 0 0 1-7.998-7.998c0-37.148-13.452-55.988-39.992-55.988-26.526 0-39.992 18.84-39.992 55.988 0 4.422-3.578 7.998-7.998 7.998s-7.998-3.576-7.998-7.998c0-45.748 20.418-71.984 55.988-71.984 35.586 0 55.988 26.236 55.988 71.984a7.994 7.994 0 0 1-7.998 7.998z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M935.908 208.046h-31.992c-4.422 0-8-3.578-8-7.998s3.578-7.998 8-7.998h31.992c4.422 0 7.998 3.578 7.998 7.998s-3.576 7.998-7.998 7.998zM919.912 479.99a7.992 7.992 0 0 1-7.998-7.998V232.042c0-4.42 3.576-7.998 7.998-7.998s7.998 3.578 7.998 7.998v239.95a7.992 7.992 0 0 1-7.998 7.998zM951.904 703.96h-63.986a7.994 7.994 0 0 1-7.998-8 7.994 7.994 0 0 1 7.998-7.998h63.986c4.422 0 8 3.578 8 7.998 0 4.422-3.578 8-8 8z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M951.904 703.96a7.994 7.994 0 0 1-7.998-8v-31.992c0-4.422 3.578-8 7.998-8 4.422 0 8 3.578 8 8v31.992c0 4.422-3.578 8-8 8zM887.918 703.96a7.994 7.994 0 0 1-7.998-8v-31.992c0-4.422 3.578-8 7.998-8a7.994 7.994 0 0 1 7.998 8v31.992c0 4.422-3.576 8-7.998 8zM951.904 799.94h-63.986a7.994 7.994 0 0 1-7.998-7.998 7.994 7.994 0 0 1 7.998-7.998h63.986c4.422 0 8 3.578 8 7.998a7.994 7.994 0 0 1-8 7.998z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M951.904 799.94a7.994 7.994 0 0 1-7.998-7.998v-95.98a7.994 7.994 0 0 1 7.998-7.998c4.422 0 8 3.578 8 7.998v95.98a7.994 7.994 0 0 1-8 7.998zM887.918 799.94a7.994 7.994 0 0 1-7.998-7.998v-95.98a7.994 7.994 0 0 1 7.998-7.998 7.994 7.994 0 0 1 7.998 7.998v95.98a7.992 7.992 0 0 1-7.998 7.998zM200.06 368.03a7.98 7.98 0 0 1-5.654-2.342l-31.994-31.994a7.996 7.996 0 1 1 11.31-11.31l31.994 31.994a7.996 7.996 0 0 1-5.656 13.652z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M200.06 368.03a7.996 7.996 0 0 1-5.654-13.652l63.986-63.988a7.996 7.996 0 1 1 11.31 11.31l-63.986 63.988a7.98 7.98 0 0 1-5.656 2.342z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M200.06 575.986a7.972 7.972 0 0 1-5.654-2.344l-31.994-31.992a7.996 7.996 0 1 1 11.31-11.31l31.994 31.992a7.996 7.996 0 0 1-5.656 13.654z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M200.06 575.986a7.996 7.996 0 0 1-5.654-13.654l63.986-63.97a7.996 7.996 0 1 1 11.31 11.31l-63.986 63.97a7.964 7.964 0 0 1-5.656 2.344z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M663.964 288.046H344.032c-4.42 0-7.998-3.578-7.998-8s3.578-8 7.998-8h319.934c4.42 0 7.998 3.578 7.998 8s-3.58 8-8 8z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M663.964 336.036H344.032c-4.42 0-7.998-3.578-7.998-7.998s3.578-8 7.998-8h319.934c4.42 0 7.998 3.578 7.998 8s-3.58 7.998-8 7.998z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M503.998 384.026h-159.966a7.994 7.994 0 0 1-7.998-8 7.994 7.994 0 0 1 7.998-7.998h159.966a7.994 7.994 0 0 1 7.998 7.998c0 4.424-3.578 8-7.998 8z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M663.964 496.002H344.032c-4.42 0-7.998-3.578-7.998-7.998s3.578-8 7.998-8h319.934c4.42 0 7.998 3.578 7.998 8s-3.58 7.998-8 7.998z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M663.964 543.992H344.032a7.994 7.994 0 0 1-7.998-7.998 7.994 7.994 0 0 1 7.998-7.998h319.934a7.994 7.994 0 0 1 7.998 7.998 7.996 7.996 0 0 1-8 7.998z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M503.998 591.984h-159.966a7.994 7.994 0 0 1-7.998-8 7.994 7.994 0 0 1 7.998-7.998h159.966a7.994 7.994 0 0 1 7.998 7.998c0 4.422-3.578 8-7.998 8z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M200.06 783.944a7.972 7.972 0 0 1-5.654-2.344l-31.994-31.992a7.996 7.996 0 1 1 11.31-11.31l31.994 31.992a7.996 7.996 0 0 1-5.656 13.654z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M200.06 783.944a7.996 7.996 0 0 1-5.654-13.654l63.986-63.986a7.996 7.996 0 1 1 11.31 11.31L205.716 781.6a7.974 7.974 0 0 1-5.656 2.344z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M663.964 703.96H344.032a7.994 7.994 0 0 1-7.998-8 7.994 7.994 0 0 1 7.998-7.998h319.934a7.994 7.994 0 0 1 7.998 7.998 7.998 7.998 0 0 1-8 8z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M663.964 751.95H344.032a7.994 7.994 0 0 1-7.998-7.998 7.994 7.994 0 0 1 7.998-7.998h319.934a7.994 7.994 0 0 1 7.998 7.998 7.996 7.996 0 0 1-8 7.998z"
+                                                            fill=""></path>
+                                                        <path
+                                                            d="M503.998 799.94h-159.966a7.994 7.994 0 0 1-7.998-7.998 7.994 7.994 0 0 1 7.998-7.998h159.966a7.994 7.994 0 0 1 7.998 7.998 7.994 7.994 0 0 1-7.998 7.998z"
+                                                            fill=""></path>
+                                                    </g>
+                                                </svg>
+                                                <span>Hostelites List</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li class="menu">
+                                        <a href="/dormitory/staff/add-hostellite" aria-expanded="false"
+                                            data-active="<%= (currentUrl.split('/')[3] == 'add-hostellite') ? 'true' : 'false' %>"
+                                            class="dropdown-toggle">
+                                            <div class="">
+                                                <svg viewBox="0 0 1024 1024" class="icon" version="1.1"
+                                                    xmlns="http://www.w3.org/2000/svg" fill="#000000">
+                                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                                        stroke-linejoin="round"></g>
+                                                    <g id="SVGRepo_iconCarrier">
+                                                        <path
+                                                            d="M512 1024C229.7 1024 0 794.3 0 512S229.7 0 512 0s512 229.7 512 512-229.7 512-512 512z m0-938.7C276.7 85.3 85.3 276.7 85.3 512S276.7 938.7 512 938.7 938.7 747.3 938.7 512 747.3 85.3 512 85.3z"
+                                                            fill="#3688FF"></path>
+                                                        <path
+                                                            d="M682.7 554.7H341.3c-23.6 0-42.7-19.1-42.7-42.7s19.1-42.7 42.7-42.7h341.3c23.6 0 42.7 19.1 42.7 42.7s-19.1 42.7-42.6 42.7z"
+                                                            fill="#5F6379"></path>
+                                                        <path
+                                                            d="M512 725.3c-23.6 0-42.7-19.1-42.7-42.7V341.3c0-23.6 19.1-42.7 42.7-42.7s42.7 19.1 42.7 42.7v341.3c0 23.6-19.1 42.7-42.7 42.7z"
+                                                            fill="#5F6379"></path>
+                                                    </g>
+                                                </svg>
+                                                <span>Add Student</span>
+                                            </div>
+                                        </a>
+                                    </li>
+
+
+                        </ul>
+                        <% } %>
+
+        </nav>
+
+    </div>
+    <!--  END SIDEBAR  -->
