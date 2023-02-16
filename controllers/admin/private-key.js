@@ -24,7 +24,6 @@ module.exports.compareHash = async function (req, res, next) {
 };
 
 module.exports.checkSystemKey = async function (req, res, next) {
-  console.log(req.body);
   const { hash } = await SystemKey.findOne();
   const result = await bcrypt.compare(req.body.systemPassword, hash);
   if (result) {
@@ -34,4 +33,13 @@ module.exports.checkSystemKey = async function (req, res, next) {
     req.flash("error", "Wrong Password");
     res.redirect("/dormitory/admin/add-admin");
   }
+};
+
+module.exports.seedSystemKey = async function (req, res, next) {
+  const hash = await bcrypt.hash("123", 12);
+  //   delete old system password
+  await SystemKey.findOneAndDelete();
+  let savedHash = await SystemKey({ hash });
+  savedHash = await savedHash.save();
+  next();
 };

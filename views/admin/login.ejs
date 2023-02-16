@@ -23,13 +23,13 @@
 
 
     <div class="form-container">
-        <div class="form-form w-100">
-            <div class="form-form-wrap border" style="min-width: 500px;">
+        <div class="form-form w-100 bg-dark">
+            <div class="form-form-wrap border bg-white" style="min-width: 500px;">
                 <div class="form-container">
                     <div class="form-content">
                         <%- include('../partials/flash/flash.ejs') %>
                             <h1 class="">
-                                <span class="brand-name mb-5">
+                                <span class="brand-name mb-5 text-success">
                                     Admin Log In
                                 </span>
                             </h1>
@@ -72,10 +72,10 @@
 
                                     </div>
 
-                                    <div class="field-wrapper">
+                                    <!-- <div class="field-wrapper">
                                         <a href="auth_pass_recovery.html" class="forgot-pass-link">Forgot
                                             Password?</a>
-                                    </div>
+                                    </div> -->
 
                                 </div>
                             </form>
@@ -96,12 +96,6 @@
     <!-- END GLOBAL MANDATORY SCRIPTS -->
     <script src="/assets/js/authentication/form-1.js"></script>
 
-    <!-- Text -->
-    <script>
-        document.getElementById('username').value = 'shoaib';
-        document.getElementById('password').value = '123';
-        //document.getElementById('submit').click();
-    </script>
 
 </body>
 

@@ -13,9 +13,12 @@ const adminRoute = require("./routes/admin");
 const staffRoute = require("./routes/staff");
 const isLoggedIn = require("./controllers/login/isLoggedInStudent");
 const ExpressError = require("./utils/ExpressError");
+const { seedSystemKey } = require("./controllers/admin/private-key");
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// app.use(seedSystemKey);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -33,7 +36,7 @@ app.listen(3000, () => {
   console.log("Server started on port" + port);
 });
 
-mongoose.connect("mongodb://0.0.0.0:27017/Dormitory", {
+mongoose.connect("mongodb://0.0.0.0:27017/DormitoryWithMaskDetection", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
@@ -63,6 +66,10 @@ app.use(passport.session());
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
+  next();
+});
+
+app.use((req, res, next) => {
   next();
 });
 

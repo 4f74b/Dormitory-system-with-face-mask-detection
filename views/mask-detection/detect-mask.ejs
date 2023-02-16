@@ -1,0 +1,325 @@
+<% layout('layouts/boilerplate') %>
+
+    <link href="/plugins/notification/snackbar/snackbar.min.css" rel="stylesheet" type="text/css">
+
+    <style>
+        .t-rotate270 {
+            -webkit-transform: rotate(270deg);
+            transform: rotate(270deg)
+        }
+    </style>
+
+    <!--  BEGIN CONTENT AREA  -->
+    <div id="content" class="main-content mt-5 pt-3">
+        <div class="container p-1 m-0" style="min-width: 100%;">
+            <%- include('../partials/flash/flash.ejs') %>
+
+                <button id="toast-btn" class="btn btn-primary showNotification d-none">show notification</button>
+
+                <!-- Toast Element -->
+
+
+                <div style="position: absolute; top: 15px; right: 10px;z-index: 9999;">
+                    <div class="toast toast-primary fade hide" role="alert" data-delay="6000" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="mr-auto mr-5"><span id="name"></span>&nbsp;Returned</strong>
+                            <small class="meta-time">just now</small>
+                            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="toast-body">
+                            <a href="" id="link">
+                                <img id="profileImage" class="" style="border-radius: 50%;"
+                                    src="/assets/img/profile-6.jpg" alt="" srcset="" width="60" height="60">
+                            </a>
+                            Hostel <span id="hostelNo"></span>,&nbsp;
+                            Room # <span id="roomNo"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-dialog m-0 d-flex justify-content-center" role="document"
+                    style="max-width: 100%; max-height:70vh;">
+                    <div id="label-container"></div>
+                    <div class="modal-content rounded-0 border-0" id="modal-reload"
+                        style="width: 80vw; height: 70vh; background-color: unset;">
+                        <div class="modal-body p-1">
+                            <div class="cameraWrapper h-100 col-lg-12 col-md-12 col-sm-12 col-12 w-100" id="wrapper">
+                                <video muted id="video" width="720" height="560" autoplay
+                                    class="position-relative revert shadow border"></video>
+                                <div class="loader1 d-none justify-content-center align-items-center">
+                                    <div class="spinner-border text-info align-self-center loader-lg">
+                                    </div>
+                                    <div>&nbsp;&nbsp;Loading Models</div>
+                                </div>
+
+                                <div class="progress br-30 w-50 border" style="height: 2rem;">
+                                    <div class="progress-bar bg-success" id="mask" role="progressbar" style="width: 50%"
+                                        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress-title"><span>Mask</span> <span id="maskValue">50
+                                                %</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="progress br-30 w-50 border" style="height: 2rem;">
+                                    <div class="progress-bar bg-danger" role="progressbar" id="noMask"
+                                        style="width: 50%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress-title"><span>No Mask</span> <span id="noMaskValue">50
+                                                %</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+        </div>
+        <!-- <div class="modal-footer border-0">
+            <img src="" alt="" id="testImg">
+            <button id="stop" type="button" class="btn btn-primary">stop Camera</button>
+        </div> -->
+
+    </div>
+    </div>
+    <!--  END CONTENT AREA  -->
+
+    </div>
+    <!-- END MAIN CONTAINER -->
+
+
+    <script src="/face-api/face-api.min.js"></script>
+
+    <!-- notification -->
+    <script>
+        // Get the Toast button
+        var toastButton = document.getElementById("toast-btn");
+        // Get the Toast element
+        var toastElement = document.getElementsByClassName("toast")[0];
+
+        toastButton.onclick = function () {
+            $('.toast').toast('show');
+        }
+    </script>
+
+
+    <script>
+        //Stream camera output into video element
+        const video = document.getElementById("video");
+        let inverval2;
+        function startVideo() {
+            navigator.getUserMedia(
+                { video: {} },
+                (stream) => (video.srcObject = stream),
+                (err) => console.error(err)
+            );
+        }
+        //stop camera
+        function stopCamera() {
+            clearInterval(inverval2)
+            video.srcObject = null;
+            video.src = '';
+            video.pause();
+            navigator.getUserMedia({ video: true }, (stream) => {
+                stream.getTracks().forEach((track) => {
+                    track.enabled = false;
+                    track.stop();
+                })
+            }, err => console.error(err))
+        }
+
+
+
+        //require face models
+        Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri("/"),
+            faceapi.nets.faceLandmark68Net.loadFromUri("/"),
+            faceapi.nets.faceRecognitionNet.loadFromUri("/"),
+            faceapi.nets.faceExpressionNet.loadFromUri("/"),
+        ]).then(() => {
+            startVideo();
+            //detect faces when camera turns on
+            video.addEventListener("play", async () => {
+                const canvas = faceapi.createCanvasFromMedia(video);
+                canvas.classList.add("position-absolute");
+                document.getElementById("wrapper").append(canvas);
+                const displaySize = { width: video.width, height: video.height };
+                faceapi.matchDimensions(canvas, displaySize);
+
+
+                //Open loader ui
+                //await document.querySelector('.loader1').classList.replace('d-none', 'd-flex');
+                let detection, tempImg;
+                inverval2 = setInterval(async () => {
+                    detections = await getDetections(canvas, displaySize);
+                    if (detections.length) {
+                        for (face of detections) {
+                            //Temporarily save image in a variable. If the resposnse from server says that the detection is unknown, then send the image to another route to save it
+                            tempImg = await extractFaceFromBox(video, face.detection._box);
+                            //Check if the detected face is present in database
+                            //detection = await checkFace(face)
+                            //If the face is not present in database
+                            //if (detection._label == 'unknown') {
+                            //Show picture in surveillane page
+                            //document.querySelector('.intruder').innerHTML += '<tbody> <tr> <td class="p-1"> <div class="td-content customer-name"> <img src="' + tempImg + '" alt="avatar"> </div> </td> <td class="p-1 w-50"> <div class="d-flex flex-column align-item-center justify-content-center"> <div>Unknown</div> <div>time</div> <div>Hostel#</div> </div> </td> <td class="p-1"> <div class="d-flex flex-column align-item-center justify-content-center"> <span class="badge badge-danger mb-1" role="button">Ignore</span> </div> </td> </tr> </tbody>';
+
+                            //send picture of intruder to server
+                            //postIntruder(tempImg);
+                            //}
+                        }
+                    }
+
+                }, 500)
+            });
+        });
+
+        //check if the detected face is present in database
+        async function checkFace(face) {
+
+            // POST request using fetch()
+            let res = await fetch("/dormitory/admin/check-face", {
+                method: "POST",
+                body: JSON.stringify(face),
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            res = await res.json();
+            return res;
+        }
+
+        //Start detecting faces
+        async function getDetections(canvas, displaySize) {
+            const detections = await faceapi
+                .detectAllFaces(video, new faceapi.TinyFaceDetectorOptions())
+                .withFaceLandmarks()
+                .withFaceDescriptors();
+            //document.querySelector('.loader1').classList.replace('d-flex', 'd-none');
+            const resizedDetections = faceapi.resizeResults(
+                detections,
+                displaySize
+            );
+            //clear canvas
+            canvas
+                .getContext("2d")
+                .clearRect(0, 0, canvas.width, canvas.height);
+
+
+            faceapi.draw.drawDetections(canvas, resizedDetections, { withScore: false });
+            //faceapi.draw.drawFaceLandmarks(canvas, resizedDetections, { drawLines: true })
+            return detections;
+        }
+
+
+        // This function extract a face from video frame with giving bounding box and display result into outputimage
+        async function extractFaceFromBox(inputVideo, box) {
+            let output;
+            const regionsToExtract = [
+                new faceapi.Rect(0, 0, 720, 560),
+            ];
+
+            let faceImages = await faceapi.extractFaces(
+                inputVideo,
+                regionsToExtract
+            );
+
+            if (faceImages.length == 0) {
+                console.log("Face not found");
+            } else {
+                faceImages.forEach((cnv) => {
+                    output = cnv.toDataURL();
+                });
+            }
+            return output;
+        }
+
+        //Send intruder data to database to save it
+        async function postIntruder(intruder) {
+            let formData = new FormData();
+            formData.append('intruder', intruder);
+            let res = await fetch("post-intruder/", {
+                method: "POST",
+                body: formData,
+            })
+            res = await res.json();
+        }
+
+        //document.getElementById('stop').addEventListener('click', (evt) => {
+        //    stopCamera();
+        //})
+
+
+    </script>
+    <script src="/plugins/notification/snackbar/snackbar.min.js"></script>
+
+    <script src="/assets/js/components/notification/custom-snackbar.js"></script>
+
+
+
+    <!-- Mask Detection Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+    <script type="text/javascript">
+        // More API functions here:
+        // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+
+        // the link to your model provided by Teachable Machine export panel
+        const URL = "https://teachablemachine.withgoogle.com/models/KKpA-1u4Q/";
+
+        let model, webcam, labelContainer, maxPredictions;
+
+        // Load the image model and setup the webcam
+        async function init() {
+            const modelURL = URL + "model.json";
+            const metadataURL = URL + "metadata.json";
+
+            // load the model and metadata
+            // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+            // or files from your local hard drive
+            // Note: the pose library adds "tmImage" object to your window (window.tmImage)
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            // Convenience function to setup a webcam
+            const flip = true; // whether to flip the webcam
+            webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+            await webcam.setup(); // request access to the webcam
+            await webcam.play();
+            window.requestAnimationFrame(loop);
+
+            // append elements to the DOM
+            document.getElementById("video").appendChild(webcam.canvas);
+            labelContainer = document.getElementById("label-container");
+            for (let i = 0; i < maxPredictions; i++) { // and class labels
+                labelContainer.appendChild(document.createElement("div"));
+            }
+        }
+
+        async function loop() {
+            webcam.update(); // update the webcam frame
+            await predict();
+            window.requestAnimationFrame(loop);
+        }
+
+        // run the webcam image through the image model
+        async function predict() {
+            // predict can take in an image, video or canvas html element
+            const prediction = await model.predict(webcam.canvas);
+            for (let i = 0; i < maxPredictions; i++) {
+                const classPrediction =
+                    prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+                labelContainer.childNodes[i].innerHTML = classPrediction;
+            }
+            //Fill mask progress Bar
+            document.getElementById('mask').style.width = (prediction[0].probability.toFixed(2) * 100) + '%';
+            document.getElementById('maskValue').innerHTML = (prediction[0].probability.toFixed(2) * 100) + ' %'
+
+            //Fill no mask progress bar
+            document.getElementById('noMask').style.width = (prediction[1].probability.toFixed(2) * 100) + '%';
+            document.getElementById('noMaskValue').innerHTML = (prediction[1].probability.toFixed(2) * 100) + ' %'
+
+        }
+        init();
+    </script>

@@ -29,6 +29,7 @@ const catchAsync = require("../utils/catchAsync");
 const ExpressError = require("../utils/ExpressError");
 const { saveHash, compareHash, checkSystemKey } = require("../controllers/admin/private-key");
 const isLoggedIntoSystem = require("../controllers/admin/is-logged-into-system");
+const { detectMask } = require("../controllers/admin/detect-mask");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -89,6 +90,9 @@ router.get("/", (req, res) => {
   res.redirect("/dormitory/admin/pass-requests");
 });
 
+// =====================================================Mask detection===============================================
+router.get("/mask/detect", detectMask);
+
 // ==========================================================Serviellance===================================================
 // Surveillance page
 router.route("/surveillance").get((req, res) => {
@@ -114,14 +118,7 @@ router
     res.render("register/face-form");
   })
   // recieve data of new hostellite
-  .post(
-    upload.single("profileImage"),
-    catchAsync(async (req, res) => {
-      const student = await registerFace(req.body, req.file);
-      req.flash("success", "Successfully added new hostellite");
-      res.redirect("/dormitory/admin/hostellites-list");
-    })
-  );
+  .post(upload.single("profileImage"), catchAsync(registerFace));
 
 // Delete a hostellite
 router.post(
